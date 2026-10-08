@@ -1,0 +1,72 @@
+loaded 0 exported links, 0 overrides
+[NOURL ] PRD-001 AS Series Product Literature
+[NOURL ] PRD-002 ASD and BSD Product Literature
+[NOURL ] PRD-003 CSD Product Literature
+[NOURL ] PRD-004 DSD, ESD, FSD Product Literature
+[NOURL ] PRD-005 SX, SM and SK Series Product Literature
+[NOURL ] PRD-006 Rotary Screw Compressor Catalog
+[NOURL ] PRD-007 SFC 18-45S Sigma Frequency Control Compressors
+[NOURL ] PRD-008 SFC 45-110M Sigma Frequency Control Compressors
+[NOURL ] PRD-009 SFC 8-22S Product Literature
+[NOURL ] PRD-010 SFC 75-515 Product Literature
+[NOURL ] PRD-011 CSG Series Oil-Free Screw Compressors
+[NOURL ] PRD-012 DSG-2 and FSG-2 Oil-Free Screw Compressors
+[SKIP  ] PRD-013 (WEB_PAGE/PAGE_VERIFIED)
+[SKIP  ] PRD-014 (WEB_PAGE/PAGE_VERIFIED)
+[SKIP  ] PRD-015 (WEB_PAGE/PAGE_VERIFIED)
+[NOURL ] CAG-001 CAGI Data Sheets: An Apples-to-Apples Comparison
+[NOURL ] CAG-002 CAGI Data Sheets: Blower Performance Comparison
+[NOURL ] CAG-003 Kaeser CAGI Performance Verification Data Sheets (per model)
+[SKIP  ] CAG-004 (WEB_PAGE/CANDIDATE_UNVERIFIED)
+[NOURL ] MNT-001 Compressor Maintenance Checklist
+[NOURL ] MNT-002 Basics of Rotary Screw Compressor Lubricants
+[NOURL ] MNT-003 Applying Root Cause Analysis to Compressed Air
+[NOURL ] MNT-004 Piston vs Rotary Screw: Technical Comparison
+[NOURL ] MNT-005 Kaeser Safety Data Sheets (lubricants/consumables)
+[SKIP  ] SVC-001 (MANUAL_REQUEST/PAGE_VERIFIED)
+[SKIP  ] SVC-002 (MANUAL_REQUEST/CANDIDATE_UNVERIFIED)
+[SKIP  ] SVC-003 (MANUAL_REQUEST/CANDIDATE_UNVERIFIED)
+[SKIP  ] SVC-004 (MANUAL_REQUEST/CANDIDATE_UNVERIFIED)
+[NOURL ] CTL-001 SIGMA CONTROL 2 Product Literature
+[SKIP  ] CTL-002 (WEB_PAGE/PAGE_VERIFIED)
+[SKIP  ] CTL-003 (MANUAL_REQUEST/THIRD_PARTY_MIRROR_ONLY)
+[SKIP  ] CTL-004 (MANUAL_REQUEST/THIRD_PARTY_MIRROR_ONLY)
+[NOURL ] CTL-005 Controls for Industrial Compressed Air Systems
+[NOURL ] CTL-006 Proper Application of Pressure/Flow Controllers
+[NOURL ] CTL-007 Applying Variable Speed Compressors in Multiple Compressor Applications
+[FAIL  ] SAM-001 403 Client Error: Forbidden for url: https://ca.kaeser.com/EN/Media/PDF_USSAM_SigmaAirManager4.0_1-2025_45-37061.pdf
+[NOURL ] SAM-002 SIGMA AIR MANAGER 4.0 Brochure (international)
+[SKIP  ] SAM-003 (MANUAL_REQUEST/THIRD_PARTY_MIRROR_ONLY)
+[NOURL ] AIR-001 KAD/KED/KBD Regenerative Desiccant Dryers
+[NOURL ] AIR-002 SECOTEC TA-TC Refrigeration Dryers
+[NOURL ] AIR-003 SECOTEC TD-TG Refrigeration Dryers
+[NOURL ] AIR-004 AIRTOWER Series
+[NOURL ] AIR-005 Compressed Air Filters
+[NOURL ] AIR-006 Membrane Dryer documentation
+[NOURL ] AIR-007 Condensate management documentation
+[NOURL ] DST-001 Air receivers / compressed air storage literature
+[NOURL ] DST-002 Air System Guide: Designing Your Compressed Air System
+[NOURL ] DST-003 Air System Guide: Control Settings and System Management
+[NOURL ] DST-004 Air System Guide: Clean Air Treatment Guide
+[NOURL ] ENG-001 Compressed Air Engineering Handbook (P-2010ED)
+[NOURL ] ENG-002 Compressed Air System Installation Guide (USCASIGEB)
+[NOURL ] ENG-003 Blower System Engineering Guide
+[NOURL ] ENG-004 Air System Guide: Air Compressor Selection Guide
+[NOURL ] ENG-005 Air System Guide (overview)
+[NOURL ] ENG-006 5 Ways System Design Affects Compressor Efficiency
+[NOURL ] ENR-001 The Compressed Air Big 3
+[NOURL ] ENR-002 Comprehensive Air Assessments: The 5-Step Process
+[NOURL ] ENR-003 Compressed Air System Leaks
+[NOURL ] ENR-004 Turning Air Compressors into an Energy Source
+[NOURL ] ENR-005 Air System Guide: Energy Savings in Compressed Air Systems
+[NOURL ] BLW-001 Rotary Blowers and Packages
+[NOURL ] BLW-002 CBS-HBS Rotary Screw Blower Packages
+[NOURL ] BLW-003 PillAerator Series
+[NOURL ] BLW-004 Rotary Lobe Blowers
+[NOURL ] BLW-005 Com-paK Series
+[NOURL ] BLW-006 Rotary Screw Vacuum Packages
+[SKIP  ] STD-001 (STANDARD_REFERENCE/CANDIDATE_UNVERIFIED)
+[SKIP  ] STD-002 (STANDARD_REFERENCE/CANDIDATE_UNVERIFIED)
+[SKIP  ] STD-003 (STANDARD_REFERENCE/CANDIDATE_UNVERIFIED)
+[SKIP  ] STD-004 (STANDARD_REFERENCE/CANDIDATE_UNVERIFIED)
+[SKIP  ] STD-005 (STANDARD_REFERENCE/CANDIDATE_UNVERIFIED)

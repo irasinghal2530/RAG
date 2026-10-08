@@ -1,0 +1,30 @@
+{
+  "document_id": "MNT-001",
+  "total_chunks": 3,
+  "chunks": [
+    {
+      "chunk_id": "chunk_0",
+      "text": "Here are some things you can do in between formal preventive maintenance(PM) visits on your electric screw compressor to extend compressor life and prevent downtime. Keeping an eye on these things will give you advance notice if you need service sooner than your next scheduled PM.",
+      "contextualized_text": "MAINTENANCE CHECKLIST FOR ELECTRIC ROTARY SCREW COMPRESSORS\nHere are some things you can do in between formal preventive maintenance(PM) visits on your electric screw compressor to extend compressor life and prevent downtime. Keeping an eye on these things will give you advance notice if you need service sooner than your next scheduled PM.",
+      "headings": [
+        "MAINTENANCE CHECKLIST FOR ELECTRIC ROTARY SCREW COMPRESSORS"
+      ]
+    },
+    {
+      "chunk_id": "chunk_1",
+      "text": "- 1 COMPRESSOR FLU I D LEVEL Most units have sight glasses to check fluid levels. Check level per manufacturer ' s instruction. Top off as needed, but do not overfill.\n- 2 ROOM TEMPERATURE Excess heat increases maintenance frequency. Mount a thermometer in the compressor room. Increase ventilation if room temperature exceeds operating limits.\n- 3 I NLET F I LTERS Inspect and remove/vacuum loose dust from inlet filters. Frequency depends on ambient dust load.\n- Inspect and vacuum ambient side of coolers. Frequency depends on ambient dust load. 4 C O O L E R S\n- 5 If present, inspect and vacuum. Frequency depends on dust load. COOLER PRE - F I LTERS\n- 6 CHECK BELTS / COUPLERS Inspect belts/couplers for cracks or other signs of wear. Check belt tension monthly and adjust as needed\n- GREASE MOTOR BEAR I NGS Failing to keep motors properly greased can lead to motor failures 7\n- 8 ELECTR I C CAB I NET Check the cabinet for dirt/dust and moisture. Vacuum dirt/dust. DISCONNECT FROM POWER SOURCE BEFORE OPENING CABINET\n- 9 DRA I N TRAPS\nIf present, press the test button to confirm proper operation.",
+      "contextualized_text": "MAINTENANCE CHECKLIST FOR ELECTRIC ROTARY SCREW COMPRESSORS\n- 1 COMPRESSOR FLU I D LEVEL Most units have sight glasses to check fluid levels. Check level per manufacturer ' s instruction. Top off as needed, but do not overfill.\n- 2 ROOM TEMPERATURE Excess heat increases maintenance frequency. Mount a thermometer in the compressor room. Increase ventilation if room temperature exceeds operating limits.\n- 3 I NLET F I LTERS Inspect and remove/vacuum loose dust from inlet filters. Frequency depends on ambient dust load.\n- Inspect and vacuum ambient side of coolers. Frequency depends on ambient dust load. 4 C O O L E R S\n- 5 If present, inspect and vacuum. Frequency depends on dust load. COOLER PRE - F I LTERS\n- 6 CHECK BELTS / COUPLERS Inspect belts/couplers for cracks or other signs of wear. Check belt tension monthly and adjust as needed\n- GREASE MOTOR BEAR I NGS Failing to keep motors properly greased can lead to motor failures 7\n- 8 ELECTR I C CAB I NET Check the cabinet for dirt/dust and moisture. Vacuum dirt/dust. DISCONNECT FROM POWER SOURCE BEFORE OPENING CABINET\n- 9 DRA I N TRAPS\nIf present, press the test button to confirm proper operation.",
+      "headings": [
+        "MAINTENANCE CHECKLIST FOR ELECTRIC ROTARY SCREW COMPRESSORS"
+      ]
+    },
+    {
+      "chunk_id": "chunk_2",
+      "text": "- 10 DUTY CYCLE Keep an eye on running hours. Low load % can increase moisture build up in the compressor\n- fluid",
+      "contextualized_text": "MAINTENANCE CHECKLIST FOR ELECTRIC ROTARY SCREW COMPRESSORS\n- 10 DUTY CYCLE Keep an eye on running hours. Low load % can increase moisture build up in the compressor\n- fluid",
+      "headings": [
+        "MAINTENANCE CHECKLIST FOR ELECTRIC ROTARY SCREW COMPRESSORS"
+      ]
+    }
+  ]
+}
