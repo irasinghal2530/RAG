@@ -1,0 +1,29 @@
+# RAG Production System - Dependencies
+
+# Document Processing
+docling>=2.0.0
+docling-core>=2.0.0
+
+# Embeddings
+sentence-transformers>=2.2.0
+torch>=2.0.0
+
+# Vector Store
+chromadb>=0.4.0
+
+# LLM Clients (optional - install as needed)
+openai>=1.0.0
+# cohere>=4.0.0
+
+# Hybrid Search (optional)
+# rank-bm25>=0.2.2
+
+# Utilities
+pydantic>=2.0.0
+python-dotenv>=1.0.0
+pyyaml>=6.0
+
+# Development
+# pytest>=7.0.0
+# black>=23.0.0
+# ruff>=0.1.0

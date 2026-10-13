@@ -1,0 +1,35 @@
+# LLM Configuration for RAG Pipeline
+# Settings for language model interactions
+
+llm:
+  # Model selection
+  provider: "openai"  # openai, azure, anthropic, local
+  model_name: "gpt-4"
+  temperature: 0.0
+  max_tokens: 1024
+  
+  # API settings
+  api_base: null  # Optional custom endpoint
+  timeout: 60
+  max_retries: 3
+
+# Prompt templates
+prompts:
+  system_template: |
+    You are a helpful assistant that answers questions based on the provided context.
+    Only use information from the context to answer. If the answer is not in the context,
+    say "I don't have enough information to answer this question."
+  
+  user_template: |
+    Context:
+    {context}
+    
+    Question: {question}
+    
+    Answer:
+
+# Generation settings
+generation:
+  include_sources: true
+  max_context_length: 4000
+  chunk_separator: "\n\n---\n\n"
