@@ -10,14 +10,13 @@ Usage:
     scores = evaluator.evaluate(question, answer, context)
 """
 
-import os
 from typing import List, Dict, Any, Optional
 
 try:
-    from openai import OpenAI
-    HAS_OPENAI = True
+    from dotenv import load_dotenv
+    load_dotenv()
 except ImportError:
-    HAS_OPENAI = False
+    pass
 
 
 # Evaluation prompts
@@ -57,38 +56,34 @@ class AnswerEvaluator:
     
     def __init__(
         self,
-        model_name: str = "gpt-4",
+        model_name: Optional[str] = None,
         api_key: Optional[str] = None,
     ):
         """
         Initialize the evaluator.
         
         Args:
-            model_name: LLM model for evaluation.
-            api_key: API key (defaults to OPENAI_API_KEY env var).
+            model_name: Gemini model for evaluation.
+            api_key: API key (defaults to GOOGLE_API_KEY env var).
         """
-        self.model_name = model_name
+        from src.generation.llm_client import LLMClient
+
         self.client = None
-        
-        if HAS_OPENAI:
-            api_key = api_key or os.getenv("OPENAI_API_KEY")
-            if api_key:
-                self.client = OpenAI(api_key=api_key)
+
+        try:
+            self.client = LLMClient(model_name=model_name, api_key=api_key)
+            self.model_name = self.client.model_name
+        except (ImportError, ValueError):
+            self.client = None
+            self.model_name = model_name
     
     def _call_llm(self, prompt: str) -> float:
         """Call LLM and parse score."""
         if not self.client:
-            return 0.5  # Default score if no LLM available
-        
-        response = self.client.chat.completions.create(
-            model=self.model_name,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.0,
-            max_tokens=10,
-        )
-        
+            return 0.5
+
         try:
-            score = float(response.choices[0].message.content.strip())
+            score = float(self.client.generate_text(prompt, max_tokens=10))
             return max(0.0, min(1.0, score))
         except (ValueError, AttributeError):
             return 0.5
@@ -231,5 +226,5 @@ if __name__ == "__main__":
         print(f"  Faithfulness: {scores['faithfulness']:.2f}")
         print(f"  Relevancy: {scores['relevancy']:.2f}")
     else:
-        print("Set OPENAI_API_KEY for LLM-based evaluation")
+        print("Set GOOGLE_API_KEY for LLM-based evaluation")
         print("Using default scores: 0.5")

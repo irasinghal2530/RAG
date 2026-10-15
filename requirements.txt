@@ -11,12 +11,8 @@ torch>=2.0.0
 # Vector Store
 chromadb>=0.4.0
 
-# LLM Clients (optional - install as needed)
-openai>=1.0.0
-# cohere>=4.0.0
-
-# Hybrid Search (optional)
-# rank-bm25>=0.2.2
+# LLM Client (Google Gemini - free tier available)
+google-genai>=1.0.0
 
 # Utilities
 pydantic>=2.0.0

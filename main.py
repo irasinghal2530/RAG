@@ -1,7 +1,7 @@
 """
 RAG Production System - Main Entry Point
 
-Two separate execution commands:
+Commands:
 
     # Offline pipeline: load → parse → chunk → embed → store in vector DB
     python main.py ingest
@@ -9,6 +9,13 @@ Two separate execution commands:
 
     # Online retrieval against an existing vector DB
     python main.py retrieve "What is the maintenance schedule?"
+
+    # Basic evaluation (retrieval + generation metrics)
+    python main.py eval --eval-file data/eval_set.json
+
+    # RAGAS evaluation (comprehensive RAG assessment)
+    python main.py ragas --eval-file data/eval_set.json
+    python main.py ragas --eval-file data/eval_set.json --metrics faithfulness context_precision
 """
 
 import argparse
@@ -89,9 +96,31 @@ def cmd_retrieve(args):
 def cmd_eval(args):
     """Run evaluation suite."""
     import subprocess
+    import sys
 
-    cmd = ["python", "scripts/run_eval.py", "--eval-file", args.eval_file]
+    cmd = [sys.executable, "scripts/run_eval.py", "--eval-file", args.eval_file]
 
+    if args.skip_generation:
+        cmd.append("--skip-generation")
+
+    subprocess.run(cmd)
+
+
+def cmd_ragas(args):
+    """Run RAGAS evaluation suite."""
+    import subprocess
+    import sys
+
+    cmd = [sys.executable, "scripts/run_ragas_eval.py", "--eval-file", args.eval_file]
+
+    if args.vectordb_dir:
+        cmd.extend(["--vectordb-dir", args.vectordb_dir])
+    if args.top_k:
+        cmd.extend(["--top-k", str(args.top_k)])
+    if args.metrics:
+        cmd.extend(["--metrics"] + args.metrics)
+    if args.output:
+        cmd.extend(["--output", args.output])
     if args.skip_generation:
         cmd.append("--skip-generation")
 
@@ -165,6 +194,49 @@ def main():
         help="Skip generation evaluation",
     )
 
+    # RAGAS evaluation parser
+    ragas_parser = subparsers.add_parser(
+        "ragas",
+        help="Run RAGAS evaluation (comprehensive RAG assessment)",
+    )
+    ragas_parser.add_argument(
+        "--eval-file",
+        required=True,
+        help="Evaluation set JSON file",
+    )
+    ragas_parser.add_argument(
+        "--vectordb-dir",
+        default="data/vectordb",
+        help="Vector database directory",
+    )
+    ragas_parser.add_argument(
+        "--top-k",
+        type=int,
+        default=5,
+        help="Number of chunks to retrieve",
+    )
+    ragas_parser.add_argument(
+        "--metrics",
+        nargs="+",
+        choices=[
+            "faithfulness",
+            "answer_relevancy",
+            "context_relevancy",
+            "context_precision",
+            "context_recall",
+        ],
+        help="Specific metrics to compute",
+    )
+    ragas_parser.add_argument(
+        "--output",
+        help="Output file for results (JSON)",
+    )
+    ragas_parser.add_argument(
+        "--skip-generation",
+        action="store_true",
+        help="Skip answer generation",
+    )
+
     args = parser.parse_args()
 
     if args.command == "ingest":
@@ -173,6 +245,8 @@ def main():
         cmd_retrieve(args)
     elif args.command == "eval":
         cmd_eval(args)
+    elif args.command == "ragas":
+        cmd_ragas(args)
     else:
         parser.print_help()
 

@@ -29,9 +29,7 @@ RAG_PRODUCTION_SYSTEM/
 │   │   └── metadata_tagger.py     # Tags chunks with context
 │   │
 │   ├── embedding/                  # Embedding generation
-│   │   ├── base_embedder.py       # Base embedding interface (sentence-transformers)
-│   │   ├── openai_embedder.py     # OpenAI embedding client
-│   │   └── embedding_cache.py     # Caches computed vectors
+│   │   └── base_embedder.py       # Local sentence-transformers embeddings
 │   │
 │   ├── retrieval/                  # Vector search
 │   │   ├── retriever.py           # Vector similarity search
@@ -43,7 +41,7 @@ RAG_PRODUCTION_SYSTEM/
 │   │
 │   └── generation/                 # LLM response generation
 │       ├── prompt_builder.py      # Builds RAG prompts
-│       └── llm_client.py          # LLM API client
+│       └── llm_client.py          # Google Gemini API client
 │
 ├── evaluation/                     # Evaluation metrics
 │   ├── retrieval_eval.py          # Hit rate, MRR, NDCG metrics
@@ -83,8 +81,8 @@ pip install -r requirements.txt
 # Copy environment template
 cp .env.example .env
 
-# Edit .env with your API keys
-# OPENAI_API_KEY=sk-...
+# Edit .env with your Gemini key
+# GOOGLE_API_KEY=...  (https://aistudio.google.com/apikey)
 ```
 
 ### 3. Add Documents
@@ -147,8 +145,8 @@ python scripts/run_eval.py --eval-file data/eval_set.json
 
 ```yaml
 llm:
-  provider: "openai"
-  model_name: "gpt-4"
+  provider: "gemini"
+  model_name: "gemini-2.0-flash"
   temperature: 0.0
   max_tokens: 1024
 ```

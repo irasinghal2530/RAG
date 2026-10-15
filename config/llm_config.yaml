@@ -3,8 +3,8 @@
 
 llm:
   # Model selection
-  provider: "openai"  # openai, azure, anthropic, local
-  model_name: "gpt-4"
+  provider: "gemini"
+  model_name: "gemini-3.8-flash"
   temperature: 0.0
   max_tokens: 1024
   

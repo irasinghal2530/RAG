@@ -12,6 +12,12 @@ import json
 from pathlib import Path
 from typing import List, Dict, Any
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from src.retrieval import Retriever
 from src.generation import PromptBuilder, LLMClient
 from evaluation.retrieval_eval import RetrievalEvaluator

@@ -1,0 +1,112 @@
+study_rag/
+├── main.py                          # Entry point
+├── requirements.txt                 # Dependencies
+├── pyproject.toml                   # Project config
+├── Dockerfile                       # Container config
+├── README.md                        # Documentation
+├── .env.example                     # Environment template
+├── .gitignore
+├── .python-version
+├── uv.lock
+│
+├── config/
+│   ├── llm_config.yaml
+│   └── retriever_config.yaml
+│
+├── docs/
+│   └── RAGAS_EVALUATION.md          # RAGAS documentation
+│
+├── evaluation/
+│   ├── __init__.py
+│   ├── answer_eval.py               # Answer evaluation
+│   ├── ragas_eval.py                # RAGAS metrics
+│   └── retrieval_eval.py            # Retrieval metrics
+│
+├── scripts/
+│   ├── build_index.py               # Index builder
+│   ├── ingest_documents.sh          # Shell script
+│   ├── run_eval.py                  # Basic evaluation
+│   └── run_ragas_eval.py            # RAGAS evaluation
+│
+├── src/
+│   ├── __init__.py
+│   ├── ingestion/
+│   │   ├── __init__.py
+│   │   ├── loader.py                # Document loading
+│   │   └── splitter.py              # Document splitting
+│   ├── chunking/
+│   │   ├── __init__.py
+│   │   └── chunker.py               # Document chunking
+│   ├── embedding/
+│   │   ├── __init__.py
+│   │   └── base_embedder.py         # Embedding generation
+│   ├── retrieval/
+│   │   ├── __init__.py
+│   │   └── retriever.py             # Vector search
+│   └── generation/
+│       ├── __init__.py
+│       ├── llm_client.py            # LLM API client
+│       └── prompt_builder.py        # Prompt construction
+│
+└── data/                            # (unchanged - contains your data)
+
+
+
+
+
+#######################################################
+
+How evaluation links to the pipeline
+┌─────────────────────────────────────────────────────────────────────┐
+│                    RAGAS Evaluation Flow                            │
+└─────────────────────────────────────────────────────────────────────┘
+
+  eval_set.json          Your Existing Pipeline              RAGAS Metrics
+  (questions)     ────►  (retriever + LLM)        ────►     (scores 0-1)
+       │                       │                                  │
+       │                       ▼                                  ▼
+       │               ┌───────────────┐                  ┌──────────────┐
+       │               │  1. Retriever │                  │ Faithfulness │
+       │               │  (vectordb)   │                  │ Answer Rel.  │
+       │               └───────┬───────┘                  │ Context Rel. │
+       │                       │                          │ Context Prec.│
+       │                       ▼                          │ Context Rec. │
+       │               ┌───────────────┐                  └──────────────┘
+       └──────────────►│  2. LLM Gen   │
+                       │  (OpenAI)     │
+                       └───────────────┘
+
+
+RAGAS, it uses your entire pipeline:
+
+Retriever → Searches your data/vectordb for relevant chunks
+LLM Client → Generates answers using OpenAI API
+RAGAS → Evaluates quality using LLM-as-judge
+
+
+### to test RAGAS evaluation metrics
+
+python main.py ragas --eval-file data/eval_set.json --metrics faithfulness
+
+
+
+To Get Full Evaluation Working
+Add OpenAI credits at https://platform.openai.com/settings/organization/billing/
+
+Then run:
+
+
+python main.py ragas --eval-file data/eval_set.json
+
+
+PDF → Docling → HybridChunker → Validation
+                                  ↓
+                              Embeddings
+                                  ↓
+                                 (vector db)
+                                  ↓
+Question → Embed → Retrieve top-k chunks
+                         ↓
+                    LLM generates answer
+                         ↓
+                    Ragas evaluation
