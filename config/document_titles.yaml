@@ -1,0 +1,11 @@
+# Human-readable title per source document (file stem -> title).
+# The chunker prepends this to every chunk's contextualized_text, and the
+# prompt shows it in each [Source n] label. Without it, a chunk such as
+# "Enclosure ... sound levels as low as 61 dB(A)" does not say which product
+# it describes, and the AS and S series brochures share most of their wording.
+# Documents missing here fall back to their first Docling heading.
+
+BLW-002: "KAESER Industrial Rotary Screw Compressors, SX to HSD Series"
+MNT-001: "Maintenance Checklist for Electric Rotary Screw Compressors"
+PRD-001: "KAESER AS Series Screw Compressors"
+PRD-005: "KAESER SX, SM and SK Series (S Series) Screw Compressors"

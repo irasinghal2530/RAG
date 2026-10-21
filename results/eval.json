@@ -1,0 +1,28 @@
+{
+  "retrieval": {
+    "hit_rate@1": 0.9230769230769231,
+    "recall@1": 0.7564102564102565,
+    "precision@1": 0.9230769230769231,
+    "ndcg@1": 0.9230769230769231,
+    "hit_rate@3": 1.0,
+    "recall@3": 0.9358974358974359,
+    "precision@3": 0.41025641025641024,
+    "ndcg@3": 0.9238028910250413,
+    "hit_rate@5": 1.0,
+    "recall@5": 0.9743589743589743,
+    "precision@5": 0.26153846153846155,
+    "ndcg@5": 0.9441158235306252,
+    "mrr": 0.9615384615384616,
+    "num_queries": 13
+  },
+  "generation": {
+    "avg_faithfulness": 0.9230769230769231,
+    "avg_relevancy": 0.9846153846153847,
+    "num_samples": 13
+  },
+  "config": {
+    "eval_file": "data\\eval_set_v2.json",
+    "top_k": null,
+    "num_samples": 13
+  }
+}

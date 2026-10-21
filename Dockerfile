@@ -2,7 +2,7 @@
 # Build: docker build -t rag-system .
 # Run:   docker run -v $(pwd)/data:/app/data rag-system
 
-FROM python:3.11-slim
+FROM python:3.13-slim
 
 # Set working directory
 WORKDIR /app
@@ -24,6 +24,7 @@ COPY config/ config/
 COPY src/ src/
 COPY evaluation/ evaluation/
 COPY scripts/ scripts/
+COPY main.py .
 
 # Create data directories
 RUN mkdir -p data/raw data/processed data/vectordb

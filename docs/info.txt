@@ -110,3 +110,47 @@ Question → Embed → Retrieve top-k chunks
                     LLM generates answer
                          ↓
                     Ragas evaluation
+
+
+####################################################################
+Cmds to run the ProjectThe project is a local RAG pipeline under study_rag. Your venv is already active, .env is present, four PDFs are in data/raw, and a vector index already exists in data/vectordb. Run everything from study_rag.
+
+Workflow
+Offline (once, or after you change documents or retrieval settings):
+
+Load and parse PDFs in data/raw (Docling) into data/processed/docling.
+Chunk those parses into data/processed/chunks.
+Embed chunks with all-MiniLM-L6-v2 into data/processed/embeddings.
+Index them in Chroma at data/vectordb.
+Online (every question):
+
+Retrieve — hybrid BM25 + dense search, then a cross-encoder rerank (config/retriever_config.yaml).
+Ask — the top chunks go to Groq (GROQ_API_KEY in .env) and the answer comes back with numbered sources.
+Eval runs the same retrieve → generate path over data/eval_set_v2.json and scores retrieval (eval) or RAGAS (ragas).
+
+Commands
+Setup (already done on this machine):
+
+
+cd C:\personal-projects\RAG\study_rag
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+copy .env.example .env
+Ingest (rebuild the index; --reset wipes the existing store first):
+
+
+python main.py ingest
+python main.py ingest --reset
+Query:
+
+
+python main.py retrieve "What is the maintenance schedule?"
+python main.py ask "What is the maintenance schedule?"
+Evaluate:
+
+
+python main.py eval --eval-file data/eval_set_v2.json --output results/eval.json
+python main.py ragas --eval-file data/eval_set_v2.json --output results/ragas.json
+python main.py ragas --eval-file data/eval_set_v2.json --no-hybrid --no-rerank
+Because the index is already built, the next useful command is python main.py ask "...". Re-run ingest --reset only if you add PDFs or change the embedding or distance metric.

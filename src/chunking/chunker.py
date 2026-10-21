@@ -17,27 +17,30 @@ from typing import List, Dict, Any, Optional
 from docling.chunking import HybridChunker
 from docling_core.types import DoclingDocument
 
+from src.config import load_document_titles, load_retriever_config
+
 
 class DocumentChunker:
     """Chunks documents into retrieval-ready pieces."""
-    
+
     def __init__(
         self,
-        merge_peers: bool = True,
-        chunk_size: int = 512,
-        chunk_overlap: int = 50,
+        merge_peers: Optional[bool] = None,
     ):
         """
         Initialize the document chunker.
-        
+
+        Chunk size is set by HybridChunker's tokenizer (all-MiniLM-L6-v2 by
+        default). Changing it renumbers chunk ids, which invalidates the
+        relevant_chunk_ids labels in the eval sets.
+
         Args:
-            merge_peers: Merge peer elements in chunking.
-            chunk_size: Target chunk size in tokens.
-            chunk_overlap: Overlap between chunks.
+            merge_peers: Merge undersized peer chunks (default: retriever_config.yaml).
         """
-        self.merge_peers = merge_peers
-        self.chunk_size = chunk_size
-        self.chunk_overlap = chunk_overlap
+        processing_cfg = load_retriever_config().get("processing", {})
+        self.merge_peers = (
+            processing_cfg.get("merge_peers", True) if merge_peers is None else merge_peers
+        )
         self._chunker = None
     
     @property
@@ -64,27 +67,38 @@ class DocumentChunker:
                         if hasattr(prov, "page_no") and prov.page_no is not None:
                             pages.append(prov.page_no)
                 
-                # Get content type
+                # Get content type (DocItemLabel values: "table", "picture",
+                # "list_item", "section_header", "title", ...)
                 if hasattr(item, "label"):
-                    content_types.add(item.label)
-            
+                    content_types.add(str(getattr(item.label, "value", item.label)).lower())
+
             if pages:
                 page_start = min(pages)
                 page_end = max(pages)
-            
+
             # Determine content type
             if content_types:
-                if "table" in content_types or "Table" in content_types:
+                if "table" in content_types:
                     content_type = "table"
-                elif "picture" in content_types or "Picture" in content_types:
+                elif "picture" in content_types:
                     content_type = "image"
-                elif "list" in content_types or "List" in content_types:
+                elif "list_item" in content_types:
                     content_type = "list"
-                elif any("heading" in t.lower() for t in content_types if isinstance(t, str)):
+                elif content_types <= {"section_header", "title"}:
                     content_type = "heading"
         
         return page_start, page_end, content_type
-    
+
+    def _document_title(self, document: DoclingDocument, document_id: str) -> str:
+        """Title from config/document_titles.yaml, else the first heading."""
+        title = load_document_titles().get(document_id)
+        if title:
+            return title
+        for item in document.texts:
+            if str(getattr(item, "label", "")).lower().endswith(("title", "section_header")):
+                return item.text
+        return document_id
+
     def chunk_document(
         self,
         document: DoclingDocument,
@@ -101,15 +115,19 @@ class DocumentChunker:
             list: List of chunk dictionaries.
         """
         chunks = []
-        
+        title = self._document_title(document, document_id)
+
         for index, chunk in enumerate(self.chunker.chunk(document)):
             page_start, page_end, content_type = self._extract_page_info(chunk)
-            
+
             chunks.append({
                 "chunk_id": f"{document_id}_chunk_{index + 1:03d}",
                 "document_id": document_id,
+                "document_title": title,
                 "text": chunk.text,
-                "contextualized_text": self.chunker.contextualize(chunk),
+                # Headings alone don't say which product a chunk is about
+                # (several brochures share sections like "Enclosure").
+                "contextualized_text": f"{title}\n{self.chunker.contextualize(chunk)}",
                 "headings": chunk.meta.headings,
                 "page_start": page_start,
                 "page_end": page_end,

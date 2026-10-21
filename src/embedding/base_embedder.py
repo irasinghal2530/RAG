@@ -16,6 +16,8 @@ from typing import List, Dict, Any, Optional
 
 from sentence_transformers import SentenceTransformer
 
+from src.config import load_retriever_config
+
 
 # Default model - good balance of speed and quality
 DEFAULT_MODEL = "all-MiniLM-L6-v2"
@@ -23,21 +25,32 @@ DEFAULT_MODEL = "all-MiniLM-L6-v2"
 
 class BaseEmbedder:
     """Base embedder using sentence-transformers."""
-    
+
     def __init__(
         self,
-        model_name: str = DEFAULT_MODEL,
-        use_contextualized: bool = True,
+        model_name: Optional[str] = None,
+        use_contextualized: Optional[bool] = None,
+        normalize: Optional[bool] = None,
+        batch_size: Optional[int] = None,
     ):
         """
-        Initialize the embedder.
-        
+        Initialize the embedder. Unset arguments come from the `embedding`
+        section of retriever_config.yaml, the same section the Retriever reads,
+        so documents and queries are always embedded by the same model.
+
         Args:
             model_name: Name of the sentence-transformer model.
             use_contextualized: Use contextualized text for embedding.
+            normalize: Scale vectors to unit length (cosine == dot product).
+            batch_size: Texts per encode batch.
         """
-        self.model_name = model_name
-        self.use_contextualized = use_contextualized
+        cfg = load_retriever_config().get("embedding", {})
+        self.model_name = model_name or cfg.get("model_name", DEFAULT_MODEL)
+        self.use_contextualized = (
+            cfg.get("use_contextualized", True) if use_contextualized is None else use_contextualized
+        )
+        self.normalize = cfg.get("normalize", True) if normalize is None else normalize
+        self.batch_size = batch_size or cfg.get("batch_size", 32)
         self._model = None
     
     @property
@@ -71,8 +84,10 @@ class BaseEmbedder:
         """
         embeddings = self.model.encode(
             texts,
+            batch_size=self.batch_size,
             show_progress_bar=show_progress,
             convert_to_numpy=True,
+            normalize_embeddings=self.normalize,
         )
         return embeddings.tolist()
     
@@ -157,7 +172,7 @@ class BaseEmbedder:
 
 def embed_chunks(
     chunks: List[Dict[str, Any]],
-    model_name: str = DEFAULT_MODEL,
+    model_name: Optional[str] = None,
     **kwargs,
 ) -> List[Dict[str, Any]]:
     """
@@ -178,7 +193,7 @@ def embed_chunks(
 def batch_embed(
     chunks_dir: Path,
     output_dir: Path,
-    model_name: str = DEFAULT_MODEL,
+    model_name: Optional[str] = None,
     **kwargs,
 ) -> int:
     """

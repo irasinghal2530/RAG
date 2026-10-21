@@ -17,25 +17,34 @@ from typing import List, Dict, Any, Set, Optional
 class RetrievalEvaluator:
     """Evaluator for retrieval quality metrics."""
     
-    def __init__(self, k_values: List[int] = [1, 3, 5, 10]):
+    def __init__(self, k_values: Optional[List[int]] = None):
         """
         Initialize the evaluator.
-        
+
         Args:
             k_values: List of k values for metrics@k.
         """
-        self.k_values = k_values
-    
+        self.k_values = k_values or [1, 3, 5, 10]
+
     def _hit_rate(
         self,
         relevant: Set[str],
         retrieved: List[str],
         k: int,
     ) -> float:
-        """Compute hit rate (recall@k)."""
+        """Compute hit rate@k: 1 if any relevant id is in the top k, else 0."""
+        return 1.0 if relevant & set(retrieved[:k]) else 0.0
+
+    def _recall(
+        self,
+        relevant: Set[str],
+        retrieved: List[str],
+        k: int,
+    ) -> float:
+        """Compute recall@k: share of the relevant ids found in the top k."""
         if not relevant:
             return 0.0
-        
+
         retrieved_at_k = set(retrieved[:k])
         hits = len(relevant & retrieved_at_k)
         return hits / len(relevant)
@@ -86,8 +95,9 @@ class RetrievalEvaluator:
         # Actual relevance scores (binary)
         actual_rel = [1.0 if doc_id in relevant else 0.0 for doc_id in retrieved[:k]]
         
-        # Ideal relevance scores (all relevant first)
-        ideal_rel = sorted(actual_rel, reverse=True)
+        # Ideal ranking puts every relevant id first, including ones that were
+        # not retrieved; sorting actual_rel would score a 1-of-3 hit at rank 1 as 1.0.
+        ideal_rel = [1.0] * min(len(relevant), k)
         
         dcg = self._dcg(actual_rel, k)
         idcg = self._dcg(ideal_rel, k)
@@ -115,6 +125,7 @@ class RetrievalEvaluator:
         
         for k in self.k_values:
             metrics[f"hit_rate@{k}"] = self._hit_rate(relevant_ids, retrieved_ids, k)
+            metrics[f"recall@{k}"] = self._recall(relevant_ids, retrieved_ids, k)
             metrics[f"precision@{k}"] = self._precision(relevant_ids, retrieved_ids, k)
             metrics[f"ndcg@{k}"] = self._ndcg(relevant_ids, retrieved_ids, k)
         
@@ -155,7 +166,7 @@ class RetrievalEvaluator:
 
 def evaluate_retrieval(
     queries: List[Dict[str, Any]],
-    k_values: List[int] = [1, 3, 5, 10],
+    k_values: Optional[List[int]] = None,
 ) -> Dict[str, float]:
     """
     Convenience function to evaluate retrieval.

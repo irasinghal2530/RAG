@@ -24,9 +24,7 @@ RAG_PRODUCTION_SYSTEM/
 │   │   └── splitter.py            # Splits docs into sections
 │   │
 │   ├── chunking/                   # Chunking strategies
-│   │   ├── chunker.py             # Main chunking logic
-│   │   ├── overlap_manager.py     # Handles chunk overlap
-│   │   └── metadata_tagger.py     # Tags chunks with context
+│   │   └── chunker.py             # Main chunking logic
 │   │
 │   ├── embedding/                  # Embedding generation
 │   │   └── base_embedder.py       # Local sentence-transformers embeddings
@@ -36,12 +34,11 @@ RAG_PRODUCTION_SYSTEM/
 │   │   └── hybrid_retriever.py    # BM25 + dense fusion
 │   │
 │   ├── reranking/                  # Result reranking
-│   │   ├── base_reranker.py       # Cross-encoder reranker
-│   │   └── cohere_reranker.py     # Cohere rerank API client
+│   │   └── base_reranker.py       # Cross-encoder reranker
 │   │
 │   └── generation/                 # LLM response generation
 │       ├── prompt_builder.py      # Builds RAG prompts
-│       └── llm_client.py          # Google Gemini API client
+│       └── llm_client.py          # Groq API client (generator + judge)
 │
 ├── evaluation/                     # Evaluation metrics
 │   ├── retrieval_eval.py          # Hit rate, MRR, NDCG metrics
@@ -81,8 +78,8 @@ pip install -r requirements.txt
 # Copy environment template
 cp .env.example .env
 
-# Edit .env with your Gemini key
-# GOOGLE_API_KEY=...  (https://aistudio.google.com/apikey)
+# Edit .env with your Groq key (generator + RAGAS judge)
+# GROQ_API_KEY=...  (https://console.groq.com/keys)
 ```
 
 ### 3. Add Documents
@@ -109,6 +106,14 @@ python main.py ingest --reset  # Reset vector store
 python main.py retrieve "What is the maintenance schedule?"
 ```
 
+### 6. Ask a Question (full RAG)
+
+```bash
+python main.py ask "What is the maintenance schedule?"
+```
+
+Retrieves the top chunks, sends them to the LLM, and prints the answer with numbered sources.
+
 ## 📚 Usage Examples
 
 ### Python API
@@ -124,19 +129,17 @@ retriever = Retriever("data/vectordb")
 results = retriever.search("What is the maintenance schedule?", top_k=5)
 
 # Generate response
-builder = PromptBuilder()
 client = LLMClient()
-
-messages = builder.build_messages("What is the maintenance schedule?", results)
-response = client.generate(messages)
+response = client.generate_with_context("What is the maintenance schedule?", results)
 
 print(response["content"])
+print(response["sources"])   # chunks that actually reached the LLM, in [Source n] order
 ```
 
 ### Run Evaluation
 
 ```bash
-python scripts/run_eval.py --eval-file data/eval_set.json
+python main.py eval --eval-file data/eval_set_v2.json --output results/eval.json
 ```
 
 ## 🔧 Configuration
@@ -145,25 +148,46 @@ python scripts/run_eval.py --eval-file data/eval_set.json
 
 ```yaml
 llm:
-  provider: "gemini"
-  model_name: "gemini-2.0-flash"
+  provider: "groq"
+  model_name: "openai/gpt-oss-20b"         # generator
+  judge_model_name: "openai/gpt-oss-120b"  # RAGAS judge (LLM_JUDGE_MODEL in .env overrides)
   temperature: 0.0
-  max_tokens: 1024
+  max_retries: 5                           # backoff on Groq rate limits
 ```
 
 ### Retriever Config (`config/retriever_config.yaml`)
 
+These values are loaded by `src/config.py`; the Retriever and eval scripts use them.
+
 ```yaml
 embedding:
   model_name: "all-MiniLM-L6-v2"
-  
+  normalize: true
+
+vector_store:
+  distance_metric: "cosine"   # re-ingest with --reset after changing
+
 retrieval:
-  top_k: 5
-  
+  top_k: 5          # chunks sent to the LLM
+  candidate_k: 20   # first-stage candidates before reranking
+  hybrid:
+    enabled: true   # BM25 + dense, merged with Reciprocal Rank Fusion
+
 reranking:
-  enabled: false
+  enabled: true
   model: "cross-encoder/ms-marco-MiniLM-L-6-v2"
 ```
+
+Document titles shown to the retriever and the LLM live in `config/document_titles.yaml`.
+
+### RAGAS Evaluation
+
+```bash
+python main.py ragas --eval-file data/eval_set_v2.json --output results/ragas.json
+python main.py ragas --eval-file data/eval_set_v2.json --no-hybrid --no-rerank   # ablation
+```
+
+Metrics the judge could not parse are reported as failures and left out of the averages, not scored 0.
 
 ## 🐳 Docker
 
@@ -177,9 +201,12 @@ docker run -v $(pwd)/data:/app/data rag-system
 
 ## 📊 Evaluation Metrics
 
-- **Hit Rate@K**: Proportion of relevant docs in top K
-- **MRR**: Mean Reciprocal Rank
-- **NDCG@K**: Normalized Discounted Cumulative Gain
+- **Hit Rate@K**: Share of queries with at least one relevant chunk in the top K
+- **Recall@K**: Share of each query's relevant chunks found in the top K
+- **MRR**: Mean Reciprocal Rank of the first relevant chunk
+- **NDCG@K**: Normalized Discounted Cumulative Gain (ideal = all relevant chunks ranked first)
+
+Results produced before Oct 2026 labelled Recall@K as `hit_rate@K`.
 - **Faithfulness**: Is the answer grounded in context?
 - **Relevancy**: Does the answer address the question?
 

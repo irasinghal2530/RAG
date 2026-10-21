@@ -1,0 +1,376 @@
+{
+  "aggregate_metrics": {
+    "avg_faithfulness": 0.8907203907203907,
+    "avg_answer_relevancy": 0.7422632292295114,
+    "avg_context_relevancy": 0.47538461538461535,
+    "avg_context_precision": 0.9294871794871795,
+    "avg_context_recall": 1.0
+  },
+  "failure_counts": {},
+  "retrieval_metrics": {
+    "hit_rate@1": 0.7564102564102565,
+    "hit_rate@3": 0.9358974358974359,
+    "hit_rate@5": 0.9743589743589743,
+    "mrr": 0.9615384615384616,
+    "num_queries": 13
+  },
+  "per_sample_metrics": [
+    {
+      "faithfulness": 0.8888888888888888,
+      "answer_relevancy": 0.72141961256663,
+      "context_relevancy": 0.3,
+      "context_precision": 0.75,
+      "context_recall": 1.0
+    },
+    {
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.4114796419938405,
+      "context_relevancy": 1.0,
+      "context_precision": 1.0,
+      "context_recall": 1.0
+    },
+    {
+      "faithfulness": 0.8571428571428571,
+      "answer_relevancy": 0.9135639866193136,
+      "context_relevancy": 0.58,
+      "context_precision": 1.0,
+      "context_recall": 1.0
+    },
+    {
+      "faithfulness": 0.8333333333333334,
+      "answer_relevancy": 0.7018783489863077,
+      "context_relevancy": 0.7,
+      "context_precision": 1.0,
+      "context_recall": 1.0
+    },
+    {
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7417452732721964,
+      "context_relevancy": 0.2,
+      "context_precision": 1.0,
+      "context_recall": 1.0
+    },
+    {
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8171125054359436,
+      "context_relevancy": 0.5,
+      "context_precision": 0.8333333333333333,
+      "context_recall": 1.0
+    },
+    {
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.6067145466804504,
+      "context_relevancy": 0.3,
+      "context_precision": 1.0,
+      "context_recall": 1.0
+    },
+    {
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7340933879216512,
+      "context_relevancy": 0.2,
+      "context_precision": 1.0,
+      "context_recall": 1.0
+    },
+    {
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7519177993138632,
+      "context_relevancy": 0.2,
+      "context_precision": 0.5,
+      "context_recall": 1.0
+    },
+    {
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8162373900413513,
+      "context_relevancy": 0.6,
+      "context_precision": 1.0,
+      "context_recall": 1.0
+    },
+    {
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8078855474789938,
+      "context_relevancy": 0.5,
+      "context_precision": 1.0,
+      "context_recall": 1.0
+    },
+    {
+      "faithfulness": 0.0,
+      "answer_relevancy": 0.7347198327382406,
+      "context_relevancy": 0.5,
+      "context_precision": 1.0,
+      "context_recall": 1.0
+    },
+    {
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8906541069348654,
+      "context_relevancy": 0.6,
+      "context_precision": 1.0,
+      "context_recall": 1.0
+    }
+  ],
+  "per_sample_failures": [
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {}
+  ],
+  "num_samples": 13,
+  "timestamp": "2026-10-15T12:19:09.944123",
+  "rag_responses": [
+    {
+      "question": "What is known about SFC Belt Drive compressors?",
+      "answer": "SFC Belt Drive compressors are available in power ranges from 8 kW to 515 kW, with quieter models (noise levels as low as 67 dB(A)). Some SFC units (8 kW to 132 kW) include integrated dryers, and the 18 kW to 90 M models use synchronous reluctance drive motors for improved part‑load efficiency. All SFC Belt Drive compressors feature a ribbed single belt drive with an automatic tensioning device that maintains proper tension, maximizes energy efficiency, prolongs belt life, and simplifies routine maintenance.",
+      "contexts": [
+        "KAESER Industrial Rotary Screw Compressors, SX to HSD Series\nSX - AS and SFC Belt Drive Compressors\nOn our 3 - 30 hp compressors, we use a space saving V-belt drive design. KAESER models include a unique automatic V-belt tensioner that maintains optimal efficiency and prolongs belt life. These models offer simple maintenance and the flexibility of changing working pressure with an easy field modification.\n7",
+        "KAESER Industrial Rotary Screw Compressors, SX to HSD Series\nASD - HSD and SFC Direct Drive Compressors\nOn larger units from 25 to 700 hp, we use mostly direct coupled drive, providing maximum power transfer and efficiency from motor to airend. Since we make more sizes of airends, we can run them at lower speeds. This design has fewer components, eliminates heat and drive losses, and reduces maintenance and related downtime.",
+        "KAESER Industrial Rotary Screw Compressors, SX to HSD Series\nUnmatched performance\nKAESER SIGMA FREQUENCY CONTROL combines the latest in Siemens drive technology with our SIGMA PROFILE airend and SIGMA CONTROL ® system. Our engineers have optimized the airend design to accommodate a wide flow range with unmatched efficiency. The drive motor and airend operate at low speeds, resulting in exceptional reliability and long life. KAESER's SFC units range from 8 to 515 kW and are incredibly quiet, with noise levels as low as 67 dB(A). SFC models from 8 to 132 kW are also available with integrated dryers. SFC models 18 to 90M feature synchronous reluctance drive motors to further improve part-load efficiency.",
+        "KAESER SX, SM and SK Series (S Series) Screw Compressors\nBelt drive with automatic tensioning\nA ribbed single belt drive efficiently transfers power from motor to airend. The SM and SK series feature our unique automatic tensioning device that maintains proper tension to maximize energy efficiency, prolong belt life, and simplify routine maintenance. The belt tension can easily be verified through a window in the service panel.",
+        "KAESER AS Series Screw Compressors\nBelt drive with automatic tensioning\nA ribbed single belt drive efficiently transfers power from motor to airend. Our unique automatic tensioning device maintains proper tension to maximize energy efficiency, prolong belt life, and simplify routine maintenance. The belt tension can easily be verified through a window in the service panel."
+      ],
+      "retrieved_chunk_ids": [
+        "BLW-002_chunk_018",
+        "BLW-002_chunk_019",
+        "BLW-002_chunk_020",
+        "PRD-005_chunk_009",
+        "PRD-001_chunk_011"
+      ],
+      "num_chunks": 5
+    },
+    {
+      "question": "Up to what pressure do KAESER SIGMA PROFILE rotary screw airends deliver?",
+      "answer": "Up to 217 psig.",
+      "contexts": [
+        "KAESER Industrial Rotary Screw Compressors, SX to HSD Series\nSIGMA PROFILE ® airends\nOur single-stage, flooded rotary screw airend delivers pressures up to 217 psig and features our power saving SIGMA PROFILE design. Our airends are optimized in size and profile to match the airend speeds with their best specific performance. Unlike the competition, KAESER makes many different airends so that we can apply them at their optimal speed and performance (see Graph 1).",
+        "KAESER SX, SM and SK Series (S Series) Screw Compressors\nSIGMA PROFILE ® airend\nOur power-saving, proprietary airend design delivers pressures up to 217 psig. It is precision-machined to close tolerances and optimized in size and profile to match the low airend speeds with their best specific performance.",
+        "KAESER AS Series Screw Compressors\nSIGMA PROFILE ® airend\nOur power-saving, proprietary airend design delivers pressures up to 217 psig. KAESER uses an airend specifically designed for the AS series. It is precisionmachined to close tolerances and optimized in size and profile to match the low airend speeds with their best specific performance. Unlike the competition, KAESER COMPRESSORS makes many different airends so we can apply them at the optimal speed and performance.",
+        "KAESER Industrial Rotary Screw Compressors, SX to HSD Series\nSX - HSD Series\n3 - 700 hp\nCapacities from: 8.8 to 3044 cfm\nPressures from: 50 to 217 psig",
+        "KAESER AS Series Screw Compressors\nAS Series\nCapacities from: 67 to 141 cfm\nPressures from: 80 to 217 psig"
+      ],
+      "retrieved_chunk_ids": [
+        "BLW-002_chunk_012",
+        "PRD-005_chunk_008",
+        "PRD-001_chunk_007",
+        "BLW-002_chunk_001",
+        "PRD-001_chunk_001"
+      ],
+      "num_chunks": 5
+    },
+    {
+      "question": "What is the difference between belt drive and direct drive compressors?",
+      "answer": "Belt‑drive compressors use a ribbed single or V‑belt to transfer power from the motor to the airend, while direct‑drive compressors couple the motor directly to the airend.  \n\n- Belt‑drive compressors: “Belt drive with automatic tensioning” (AS, SX, SM, SK, SX‑AS, SFC) and “space saving V‑belt drive design” (3‑30 hp SX‑AS and SFC).  \n- Direct‑drive compressors: “direct coupled drive” (ASD‑HSD and SFC Direct Drive) with maximum power transfer and efficiency, and standard communications interfaces.",
+      "contexts": [
+        "KAESER Industrial Rotary Screw Compressors, SX to HSD Series\nASD - HSD and SFC Direct Drive Compressors\nOn larger units from 25 to 700 hp, we use mostly direct coupled drive, providing maximum power transfer and efficiency from motor to airend. Since we make more sizes of airends, we can run them at lower speeds. This design has fewer components, eliminates heat and drive losses, and reduces maintenance and related downtime.",
+        "KAESER AS Series Screw Compressors\nBelt drive with automatic tensioning\nA ribbed single belt drive efficiently transfers power from motor to airend. Our unique automatic tensioning device maintains proper tension to maximize energy efficiency, prolong belt life, and simplify routine maintenance. The belt tension can easily be verified through a window in the service panel.",
+        "KAESER SX, SM and SK Series (S Series) Screw Compressors\nBelt drive with automatic tensioning\nA ribbed single belt drive efficiently transfers power from motor to airend. The SM and SK series feature our unique automatic tensioning device that maintains proper tension to maximize energy efficiency, prolong belt life, and simplify routine maintenance. The belt tension can easily be verified through a window in the service panel.",
+        "KAESER Industrial Rotary Screw Compressors, SX to HSD Series\nSX - AS and SFC Belt Drive Compressors\nOn our 3 - 30 hp compressors, we use a space saving V-belt drive design. KAESER models include a unique automatic V-belt tensioner that maintains optimal efficiency and prolongs belt life. These models offer simple maintenance and the flexibility of changing working pressure with an easy field modification.\n7",
+        "KAESER Industrial Rotary Screw Compressors, SX to HSD Series\nCommunications Capabilities:\n- Ethernet port and built-in web-server facilitate integration into the IIoT\n- ModBus, Profinet ® , Profibus ® , DeviceNet™, EtherNet/IP, and other industrial communications interfaces are also available as plug in options for seamless integration into plant control/monitoring systems (optional for belt drive, standard for direct drive units)\n- Sends e-mail alerts for maintenance notifications, alarms, warnings, and optional messages"
+      ],
+      "retrieved_chunk_ids": [
+        "BLW-002_chunk_019",
+        "PRD-001_chunk_011",
+        "PRD-005_chunk_009",
+        "BLW-002_chunk_018",
+        "BLW-002_chunk_028"
+      ],
+      "num_chunks": 5
+    },
+    {
+      "question": "What is the automatic belt tensioning feature?",
+      "answer": "The automatic belt tensioning feature is a device that maintains proper belt tension to maximize energy efficiency, prolong belt life, and simplify routine maintenance.  \n\n- It is present on KAESER SX, SM and SK Series (S Series) screw compressors.  \n- It is also present on KAESER AS Series screw compressors.  \n- It is included on KAESER SX, SM and SK Series (S Series) screw compressors as a “single piece, multi‑ribbed belt” with an automatic tensioner.  \n- It is used on 3‑30 hp SX‑to‑HSD Series compressors with a space‑saving V‑belt drive design.  \n- The tension can be verified through a window in the service panel.",
+      "contexts": [
+        "KAESER SX, SM and SK Series (S Series) Screw Compressors\nBelt drive with automatic tensioning\nA ribbed single belt drive efficiently transfers power from motor to airend. The SM and SK series feature our unique automatic tensioning device that maintains proper tension to maximize energy efficiency, prolong belt life, and simplify routine maintenance. The belt tension can easily be verified through a window in the service panel.",
+        "KAESER AS Series Screw Compressors\nBelt drive with automatic tensioning\nA ribbed single belt drive efficiently transfers power from motor to airend. Our unique automatic tensioning device maintains proper tension to maximize energy efficiency, prolong belt life, and simplify routine maintenance. The belt tension can easily be verified through a window in the service panel.",
+        "KAESER Industrial Rotary Screw Compressors, SX to HSD Series\nSX - AS and SFC Belt Drive Compressors\nOn our 3 - 30 hp compressors, we use a space saving V-belt drive design. KAESER models include a unique automatic V-belt tensioner that maintains optimal efficiency and prolongs belt life. These models offer simple maintenance and the flexibility of changing working pressure with an easy field modification.\n7",
+        "KAESER SX, SM and SK Series (S Series) Screw Compressors\nService-friendly design\nThe SX, SM, and SK series rotary screw compressors feature an open package layout. All of the major components are easily accessible, reducing preventive maintenance time by as much as 50% when compared to other similarly sized units.\nWhen you consider the energy efficiency savings and the maintenance costs savings, it's clear that owning a Built for a lifetime™ KAESER COMPRESSOR will save you money, year after year.\nCartridge style 1 micron inlet filter\nSide panel windows to view fluid level and test the auto drain (on T versions and AIRCENTERS)\nSingle piece, multi-ribbed belt. SM and SK units also include an automatic tensioner\nEasy single panel access for routine service Maintenance reminders on controller Cleanable filter mat on coolers (not shown)",
+        "KAESER Industrial Rotary Screw Compressors, SX to HSD Series\nCommunications Capabilities:\n- Ethernet port and built-in web-server facilitate integration into the IIoT\n- ModBus, Profinet ® , Profibus ® , DeviceNet™, EtherNet/IP, and other industrial communications interfaces are also available as plug in options for seamless integration into plant control/monitoring systems (optional for belt drive, standard for direct drive units)\n- Sends e-mail alerts for maintenance notifications, alarms, warnings, and optional messages"
+      ],
+      "retrieved_chunk_ids": [
+        "PRD-005_chunk_009",
+        "PRD-001_chunk_011",
+        "BLW-002_chunk_018",
+        "PRD-005_chunk_007",
+        "BLW-002_chunk_028"
+      ],
+      "num_chunks": 5
+    },
+    {
+      "question": "What capacity does the ASD 40 compressor have?",
+      "answer": "The ASD 40 compressor has a capacity of **192 cfm at 125 psig, 159 cfm at 175 psig, and 122 cfm at 217 psig**.",
+      "contexts": [
+        "KAESER Industrial Rotary Screw Compressors, SX to HSD Series\nRotary Screw Compressors\nASD 25\n111\n-\n-\nASD 30\n131\n109\n-\nASD 40S\n163\n126\n105\nASD 40\n192\n159\n122\nModel Capacity at Operating Pressure (cfm)\n125 psig\n175 psig\n217 psig\nBSD 40\n196\n161\n-\nBSD 50\n237\n192\n157\nBSD 60\n289\n233\n187",
+        "KAESER Industrial Rotary Screw Compressors, SX to HSD Series\nRotary Screw Compressors\nSX Series\nSM Series\nSK Series\nAS Series\nASD Series\nBSD Series\nCSD Series\nDSD Series\nESD Series Model Capacity at Operating Pressure (cfm)\n125 psig\n160 psig\n217 psig\nSX 3\n12.0\n9.2\n-\nSX 4\n15.9\n12.7\n8.8\nSX 5\n21.2\n17.0\n12.7\nSX 7.5\n28.3\n23.7\n18.7\nModel Capacity at Operating Pressure (cfm)\n125 psig\n160 psig\n217 psig\nSM 7.5\n32.2\n25.9\n19.3\nSM 10\n45.1\n36.9\n28.2\nSM 15\n55.2\n46.6\n37.4\nModel Capacity at Operating Pressure (cfm)\n125 psig\n160 psig\n217 psig\nSK 15\n69.7\n58.6\n47.6\nSK 20\n87.8\n77.4\n64.8\nModel Capacity at Operating Pressure (cfm)\n125 psig\n160 psig\n217 psig\nAS 20\n97.3\n83.4\n67.1\nAS 25\n119.7\n101.8\n85.2\nAS 30\n140.7\n121.8\n101.6\nModel Capacity at Operating Pressure (cfm)\n125 psig\n175 psig\n217 psig",
+        "KAESER Industrial Rotary Screw Compressors, SX to HSD Series\nASD - HSD and SFC Direct Drive Compressors\nOn larger units from 25 to 700 hp, we use mostly direct coupled drive, providing maximum power transfer and efficiency from motor to airend. Since we make more sizes of airends, we can run them at lower speeds. This design has fewer components, eliminates heat and drive losses, and reduces maintenance and related downtime.",
+        "KAESER Industrial Rotary Screw Compressors, SX to HSD Series\nVariable Frequency Drive\n\n 208. SFC 30, Capacity at 460V (1) at Operating Pressure (cfm).145 psig (2) = 193. , Capacity at 460V (1) at Operating Pressure (cfm).Min / Max = MIN. , Capacity at 460V (1) at Operating Pressure (cfm).110 psig = 54. , Capacity at 460V (1) at Operating Pressure (cfm).125 psig = 54. , Capacity at 460V (1) at Operating Pressure (cfm).145 psig (2) = 43. SFC 37, Capacity at 460V (1) at Operating Pressure (cfm).Min / Max = MAX. SFC 37, Capacity at 460V (1) at Operating Pressure (cfm).110 psig = 262. SFC 37, Capacity at 460V (1) at Operating Pressure (cfm).125 psig = 248 69. SFC 37, Capacity at 460V (1) at Operating Pressure (cfm).145 psig (2) = 218 53. SFC 45S, Capacity at 460V (1) at Operating Pressure (cfm).Min / Max = MIN MAX. SFC",
+        "KAESER AS Series Screw Compressors\nAS Series\nCapacities from: 67 to 141 cfm\nPressures from: 80 to 217 psig"
+      ],
+      "retrieved_chunk_ids": [
+        "BLW-002_chunk_032",
+        "BLW-002_chunk_031",
+        "BLW-002_chunk_019",
+        "BLW-002_chunk_044",
+        "PRD-001_chunk_001"
+      ],
+      "num_chunks": 5
+    },
+    {
+      "question": "How quiet are the SX, SM and SK compressors?",
+      "answer": "The SX, SM and SK compressors operate at sound levels as low as **61 dB(A)**, which is **up to 10 dB(A) quieter** than comparable units.",
+      "contexts": [
+        "KAESER SX, SM and SK Series (S Series) Screw Compressors\nEnclosure\nOur superior cabinet design reduces noise and footprint while offering easy access for service. A heavy-duty metal enclosure with a durable powder-coated finish keeps noise in but dirt and dust out. Thick sound insulation keeps sound levels as low as 61 dB(A), up to 10 dB(A) quieter than comparable units.\nLockable panels provide easy access to all maintenance items. Electrical components are housed in a spacious, ventilated control cabinet. Wiring is neatly arranged and terminals are clearly identified.\nInternal and external vibration isolators eliminate stress on piping and wire connections, further increasing reliability.",
+        "KAESER SX, SM and SK Series (S Series) Screw Compressors\nAIRCENTER\nTo simplify your compressed air system, KAESER offers the AIRCENTER. This unit combines essential system components in one easy-to-install package. AIRCENTERS come completely assembled and include a refrigerated dryer with automatic condensate drain, receiver tank, and an optional filtration package. These super quiet and energy efficient units are compact and perfect for installations where space is limited.",
+        "KAESER Industrial Rotary Screw Compressors, SX to HSD Series\nExtremely low sound and vibration\nAll models come standard with KAESER's superior cabinet that features complete metal enclosures with sound proofing liners and heavy-duty vibration isolation. As a result, our compressors are about 10 dB(A) quieter than conventional compressors of equal performance.",
+        "KAESER SX, SM and SK Series (S Series) Screw Compressors\nSIGMA PROFILE ® airend\nOur power-saving, proprietary airend design delivers pressures up to 217 psig. It is precision-machined to close tolerances and optimized in size and profile to match the low airend speeds with their best specific performance.",
+        "KAESER SX, SM and SK Series (S Series) Screw Compressors\nService-friendly design\nThe SX, SM, and SK series rotary screw compressors feature an open package layout. All of the major components are easily accessible, reducing preventive maintenance time by as much as 50% when compared to other similarly sized units.\nWhen you consider the energy efficiency savings and the maintenance costs savings, it's clear that owning a Built for a lifetime™ KAESER COMPRESSOR will save you money, year after year.\nCartridge style 1 micron inlet filter\nSide panel windows to view fluid level and test the auto drain (on T versions and AIRCENTERS)\nSingle piece, multi-ribbed belt. SM and SK units also include an automatic tensioner\nEasy single panel access for routine service Maintenance reminders on controller Cleanable filter mat on coolers (not shown)"
+      ],
+      "retrieved_chunk_ids": [
+        "PRD-005_chunk_014",
+        "PRD-005_chunk_023",
+        "BLW-002_chunk_014",
+        "PRD-005_chunk_008",
+        "PRD-005_chunk_007"
+      ],
+      "num_chunks": 5
+    },
+    {
+      "question": "How much oil ends up in the compressed air after the separator on the AS series?",
+      "answer": "The separator on the AS series reduces fluid carry‑over to **2 ppm or less**.",
+      "contexts": [
+        "KAESER AS Series Screw Compressors\nEfficient separator system\nA three-stage separator (ASME or CRN) combines centrifugal action and a 2-stage coalescing filter to reduce fluid carry over to 2 ppm or less. Quick release fittings, drain and fill ports are arranged for fast and easy fluid changes from sump and cooler without any pumping device. The easyto-read fluid level indicator can be\nchecked through a window in the service panel while the compressor is running.",
+        "KAESER SX, SM and SK Series (S Series) Screw Compressors\nEfficient separator system\nA three-stage separator (ASME or CRN) combines centrifugal action and a 2-stage coalescing filter to reduce fluid carry over to 2 ppm or less. Quick release fittings, drain and fill ports are arranged for fast and easy fluid changes from sump and cooler without any pumping device. The easyto-read fluid level\nindicator can be safely checked through a window in the service panel while the compressor is running.",
+        "KAESER AS Series Screw Compressors\nAluminum plate heat exchanger\nThe dryer's aluminum heat exchanger is corrosion and contamination-resistant. Even with fluctuating airflow, the separate stainless steel condensate separator reliably removes the accumulating condensate from the air.",
+        "KAESER AS Series Screw Compressors\nSIGMA PROFILE ® airend\nOur power-saving, proprietary airend design delivers pressures up to 217 psig. KAESER uses an airend specifically designed for the AS series. It is precisionmachined to close tolerances and optimized in size and profile to match the low airend speeds with their best specific performance. Unlike the competition, KAESER COMPRESSORS makes many different airends so we can apply them at the optimal speed and performance.",
+        "KAESER AS Series Screw Compressors\nAS Series\nCapacities from: 67 to 141 cfm\nPressures from: 80 to 217 psig"
+      ],
+      "retrieved_chunk_ids": [
+        "PRD-001_chunk_010",
+        "PRD-005_chunk_013",
+        "PRD-001_chunk_020",
+        "PRD-001_chunk_007",
+        "PRD-001_chunk_001"
+      ],
+      "num_chunks": 5
+    },
+    {
+      "question": "Which refrigerant do the integrated dryers use, and why was it chosen?",
+      "answer": "The integrated dryers use the R‑513A refrigerant, chosen because it has 56 % lower global warming potential than common dryer refrigerants and, combined with the advanced heat‑exchanger design, allows the dryer to use only half the refrigerant, making it the most climate‑friendly dryer possible.",
+      "contexts": [
+        "KAESER SX, SM and SK Series (S Series) Screw Compressors\nClimate friendly design\nIn addition to energy saving controls, our integrated dryers feature the new R-513A refrigerant with 56% lower global warming potential than common dryer refrigerants. Combined with our advanced heat exchanger design, we need only half the refrigerant - resulting in the most climate friendly dryer possible.",
+        "KAESER SX, SM and SK Series (S Series) Screw Compressors\nEnergy-saving control\nThe integrated refrigerated dryer in KAESER \"T\" units provides high efficiency performance thanks to its energysaving control. The dryer is active only when compressed air actually needs to be dried. This approach achieves the required compressed air quality with maximum efficiency.",
+        "KAESER AS Series Screw Compressors\nEnergy-saving control\nThe integrated refrigerated dryer in KAESER units provides high efficiency performance thanks to its energysaving control. The dryer is active only when compressed air actually needs to be dried: This approach achieves the required compressed air quality with maximum efficiency.",
+        "KAESER AS Series Screw Compressors\nIntegrated dryer option\nThe AS Series is available with an integrated refrigerated dryer. The dryer is located in a separate cabinet so it is not exposed to preheated air or contaminants from the compressor package.",
+        "KAESER SX, SM and SK Series (S Series) Screw Compressors\nEco-Drain\nThe integrated refrigerated dryer also features a zero loss Eco-Drain. The advanced level-controlled condensate drain eliminates the compressed air losses associated with solenoid valve control. This saves energy and considerably enhances the reliability of the compressed air supply."
+      ],
+      "retrieved_chunk_ids": [
+        "PRD-005_chunk_021",
+        "PRD-005_chunk_020",
+        "PRD-001_chunk_019",
+        "PRD-001_chunk_017",
+        "PRD-005_chunk_019"
+      ],
+      "num_chunks": 5
+    },
+    {
+      "question": "Between PM visits, how often should I check the belt tension?",
+      "answer": "Check the belt tension monthly.",
+      "contexts": [
+        "Maintenance Checklist for Electric Rotary Screw Compressors\nMAINTENANCE CHECKLIST FOR ELECTRIC ROTARY SCREW COMPRESSORS\nHere are some things you can do in between formal preventive maintenance(PM) visits on your electric screw compressor to extend compressor life and prevent downtime. Keeping an eye on these things will give you advance notice if you need service sooner than your next scheduled PM.",
+        "Maintenance Checklist for Electric Rotary Screw Compressors\nMAINTENANCE CHECKLIST FOR ELECTRIC ROTARY SCREW COMPRESSORS\n- 1 COMPRESSOR FLU I D LEVEL Most units have sight glasses to check fluid levels. Check level per manufacturer ' s instruction. Top off as needed, but do not overfill.\n- 2 ROOM TEMPERATURE Excess heat increases maintenance frequency. Mount a thermometer in the compressor room. Increase ventilation if room temperature exceeds operating limits.\n- 3 I NLET F I LTERS Inspect and remove/vacuum loose dust from inlet filters. Frequency depends on ambient dust load.\n- Inspect and vacuum ambient side of coolers. Frequency depends on ambient dust load. 4 C O O L E R S\n- 5 If present, inspect and vacuum. Frequency depends on dust load. COOLER PRE - F I LTERS\n- 6 CHECK BELTS / COUPLERS Inspect belts/couplers for cracks or other signs of wear. Check belt tension monthly and adjust as needed\n- GREASE MOTOR BEAR I NGS Failing to keep motors properly greased can lead to motor failures 7\n- 8 ELECTR I C CAB I NET Check the cabinet for dirt/dust and moisture. Vacuum dirt/dust. DISCONNECT FROM POWER SOURCE BEFORE OPENING CABINET\n- 9 DRA I N TRAPS\nIf present, press the test button to confirm proper operation.",
+        "KAESER AS Series Screw Compressors\nBelt drive with automatic tensioning\nA ribbed single belt drive efficiently transfers power from motor to airend. Our unique automatic tensioning device maintains proper tension to maximize energy efficiency, prolong belt life, and simplify routine maintenance. The belt tension can easily be verified through a window in the service panel.",
+        "KAESER SX, SM and SK Series (S Series) Screw Compressors\nBelt drive with automatic tensioning\nA ribbed single belt drive efficiently transfers power from motor to airend. The SM and SK series feature our unique automatic tensioning device that maintains proper tension to maximize energy efficiency, prolong belt life, and simplify routine maintenance. The belt tension can easily be verified through a window in the service panel.",
+        "KAESER Industrial Rotary Screw Compressors, SX to HSD Series\nSX - AS and SFC Belt Drive Compressors\nOn our 3 - 30 hp compressors, we use a space saving V-belt drive design. KAESER models include a unique automatic V-belt tensioner that maintains optimal efficiency and prolongs belt life. These models offer simple maintenance and the flexibility of changing working pressure with an easy field modification.\n7"
+      ],
+      "retrieved_chunk_ids": [
+        "MNT-001_chunk_001",
+        "MNT-001_chunk_002",
+        "PRD-001_chunk_011",
+        "PRD-005_chunk_009",
+        "BLW-002_chunk_018"
+      ],
+      "num_chunks": 5
+    },
+    {
+      "question": "What should I do if my compressor room gets too hot?",
+      "answer": "Mount a thermometer in the compressor room and increase ventilation if the room temperature exceeds the operating limits.",
+      "contexts": [
+        "Maintenance Checklist for Electric Rotary Screw Compressors\nMAINTENANCE CHECKLIST FOR ELECTRIC ROTARY SCREW COMPRESSORS\n- 1 COMPRESSOR FLU I D LEVEL Most units have sight glasses to check fluid levels. Check level per manufacturer ' s instruction. Top off as needed, but do not overfill.\n- 2 ROOM TEMPERATURE Excess heat increases maintenance frequency. Mount a thermometer in the compressor room. Increase ventilation if room temperature exceeds operating limits.\n- 3 I NLET F I LTERS Inspect and remove/vacuum loose dust from inlet filters. Frequency depends on ambient dust load.\n- Inspect and vacuum ambient side of coolers. Frequency depends on ambient dust load. 4 C O O L E R S\n- 5 If present, inspect and vacuum. Frequency depends on dust load. COOLER PRE - F I LTERS\n- 6 CHECK BELTS / COUPLERS Inspect belts/couplers for cracks or other signs of wear. Check belt tension monthly and adjust as needed\n- GREASE MOTOR BEAR I NGS Failing to keep motors properly greased can lead to motor failures 7\n- 8 ELECTR I C CAB I NET Check the cabinet for dirt/dust and moisture. Vacuum dirt/dust. DISCONNECT FROM POWER SOURCE BEFORE OPENING CABINET\n- 9 DRA I N TRAPS\nIf present, press the test button to confirm proper operation.",
+        "KAESER SX, SM and SK Series (S Series) Screw Compressors\nOptimized air flow design\nAir is drawn into separate cooling zones for the drive motor and coolers. This \"split cooling\" design eliminates preheating, increasing cooling efficiency without increasing power consumption. Cooler temperatures also promote longer lubricant and motor life. Cooling air is exhausted through a single port at the top of the cabinet. Ducting this air enables heat recovery and further reduces noise.\nAir for compression enters through a separate grill on the right side of the cabinet. It is then filtered through a twostage air intake filter. This filter protects the airend and extends fluid change intervals.\nFresh cooling air\nRecirculated air\nExhaust air\nThe SX, SM, and SK units can be installed in a corner and still provide easy access for maintenance.",
+        "KAESER AS Series Screw Compressors\nParallel cooling design\nTwo separate cooling air inlet zones for the coolers and drive motor ensure optimum cooling. Drawing ambient air directly across the coolers and motor through separate zones eliminates preheating and results in longer lubricant life and a cooler running motor. This also results in much lower approach temperatures, improving moisture separation and air quality.\nTo increase reliability and reduce maintenance costs, the coolers are conveniently located on the outside of the unit, where dust and dirt build-up are easily seen and can be removed without dismantling the cooler. Top exhaust allows for easy heat recovery and reduces the system footprint.",
+        "KAESER AS Series Screw Compressors\nRadial cooling fan\nA powerful radial fan pulls air through the coolers and creates a vacuum within the cabinet that effectively cools the motor, even under severe operating conditions.",
+        "KAESER Industrial Rotary Screw Compressors, SX to HSD Series\nService-friendly Design\ncooler running motor. This also results in much lower approach temperatures, improving moisture separation and air quality.\nTo increase reliability and reduce maintenance costs, the coolers are conveniently located on the outside of the unit, where dust and dirt build-up are easily seen and can be removed without dismantling the cooler. A powerful fan pulls air through the coolers and creates a vacuum within the cabinet that effectively cools the motor even under severe operating conditions. Top exhaust allows for easy heat recovery and reduces the system footprint."
+      ],
+      "retrieved_chunk_ids": [
+        "MNT-001_chunk_002",
+        "PRD-005_chunk_016",
+        "PRD-001_chunk_016",
+        "PRD-001_chunk_012",
+        "BLW-002_chunk_016"
+      ],
+      "num_chunks": 5
+    },
+    {
+      "question": "How many operating parameters does the SIGMA CONTROL 2 controller watch, and what does it do when something goes wrong?",
+      "answer": "The SIGMA CONTROL 2 watches **more than 20 critical operating parameters** and, when something goes wrong, it **shuts the unit down to prevent damage** and **signals that immediate service is required**.",
+      "contexts": [
+        "KAESER AS Series Screw Compressors\nIntelligent control and protection\nTo protect your investment and ensure the most efficient operation possible, these compressors come standard with our SIGMA CONTROL ® 2. This intelligent controller includes multiple pre-programmed control profiles so you can select the one that best fits your application. SIGMA CONTROL 2 monitors more than 20 critical operating parameters, shuts the unit down to prevent damage, and signals if immediate service is required. It also tracks preventive maintenance intervals and provides notice when PMs are due. An RFID sensor provides secure access and simplifies managing maintenance intervals. An SD card slot with included SD card enables fast, easy software updates, storing key operational parameters, and offers long-term data storage for analyzing energy consumption and compressor operation. SIGMA CONTROL 2 has superior communications capabilities. An Ethernet port and built-in web-server come standard in the controller making integration into the SIGMA NETWORK possible.\nThe optional SIGMA CONTROL 2 with communications port can be fitted with communication modules like ModBus, EtherNet/IP, Profibus ® , DeviceNet™, Profinet ® , or other industrial communications interfaces as a plug-in option for seamless integration into plant control/monitoring systems.",
+        "KAESER SX, SM and SK Series (S Series) Screw Compressors\nIntelligent control and protection\nTo protect your investment and ensure the most efficient operation possible, these compressors are available with our SIGMA CONTROL ® 2. This intelligent controller comes standard with multiple pre-programmed control profiles so you can select the one that best fits your application. SIGMA CONTROL 2 monitors more than 20 critical operating parameters, shuts the unit down to prevent damage, and signals if immediate service is required. It also tracks preventive maintenance intervals and provides notice when PMs are due. An RFID sensor provides secure access and simplifies managing maintenance intervals. An SD card slot with included SD card enables fast, easy software updates, storing key operational parameters, and offers long-term data storage for analyzing energy consumption and compressor operation. SIGMA CONTROL 2 has superior communications capabilities. An Ethernet port and built-in web-server come standard in the controller making integration into the Sigma Network possible.\nThe optional SIGMA CONTROL 2 with communications port can be fitted with communication modules like ModBus, EtherNet/IP, Profibus ® , DeviceNet™, Profinet ® , or other industrial communications interfaces as a plug-in option for seamless integration into plant control/monitoring systems.",
+        "KAESER Industrial Rotary Screw Compressors, SX to HSD Series\nIntelligent control and protection\nTo protect your investment and ensure the most efficient operation possible, we control our compressors with our SIGMA CONTROL ® 2. This intelligent controller comes standard with multiple pre-programmed control profiles so you can select the one that best fits your application.",
+        "KAESER Industrial Rotary Screw Compressors, SX to HSD Series\nSuperior system control\nSIGMA AIR MANAGER ® (SAM) 4.0 is a supervisory control system for all compressed air production and treatment components. The unique 3D advanced Control continuously analyzes the various parameters (e.g. switching and control efficiency) and calculates the ideal combination of compressors to achieve optimum efficiency.\nSAM 4.0 enables predictive maintenance with its built-in maintenance reminders and messaging capabilities. These features not only boost operational reliability and efficiency, but also significantly reduce energy costs.\nSAM 4.0 features KAESER CONNECT which displays your compressed air system information in real-time on your desktop or laptop computer via a standard internet browser. Simple HTML pages show the compressors' operational state, SAM's operating and system pressure data, as well as service and alarm messages.",
+        "KAESER Industrial Rotary Screw Compressors, SX to HSD Series\nUnmatched performance\nKAESER SIGMA FREQUENCY CONTROL combines the latest in Siemens drive technology with our SIGMA PROFILE airend and SIGMA CONTROL ® system. Our engineers have optimized the airend design to accommodate a wide flow range with unmatched efficiency. The drive motor and airend operate at low speeds, resulting in exceptional reliability and long life. KAESER's SFC units range from 8 to 515 kW and are incredibly quiet, with noise levels as low as 67 dB(A). SFC models from 8 to 132 kW are also available with integrated dryers. SFC models 18 to 90M feature synchronous reluctance drive motors to further improve part-load efficiency."
+      ],
+      "retrieved_chunk_ids": [
+        "PRD-001_chunk_013",
+        "PRD-005_chunk_017",
+        "BLW-002_chunk_025",
+        "BLW-002_chunk_029",
+        "BLW-002_chunk_020"
+      ],
+      "num_chunks": 5
+    },
+    {
+      "question": "Does the condensate drain on the T-model dryers waste compressed air?",
+      "answer": "No, the condensate drain on the T‑model dryers does not waste compressed air.  \nThe integrated refrigerated dryer in KAESER “T” units features a zero‑loss Eco‑Drain, which eliminates the compressed air losses associated with solenoid valve control.",
+      "contexts": [
+        "KAESER AS Series Screw Compressors\nRefrigerated dryer with Eco-Drain\nThe refrigerated dryer also features a zero loss Eco-Drain. The advanced levelcontrolled condensate drain eliminates the compressed air losses associated with solenoid valve control. This saves energy and considerably enhances the reliability of the compressed air supply.",
+        "KAESER SX, SM and SK Series (S Series) Screw Compressors\nEco-Drain\nThe integrated refrigerated dryer also features a zero loss Eco-Drain. The advanced level-controlled condensate drain eliminates the compressed air losses associated with solenoid valve control. This saves energy and considerably enhances the reliability of the compressed air supply.",
+        "KAESER SX, SM and SK Series (S Series) Screw Compressors\nAIRCENTER\nTo simplify your compressed air system, KAESER offers the AIRCENTER. This unit combines essential system components in one easy-to-install package. AIRCENTERS come completely assembled and include a refrigerated dryer with automatic condensate drain, receiver tank, and an optional filtration package. These super quiet and energy efficient units are compact and perfect for installations where space is limited.",
+        "KAESER SX, SM and SK Series (S Series) Screw Compressors\nEnergy-saving control\nThe integrated refrigerated dryer in KAESER \"T\" units provides high efficiency performance thanks to its energysaving control. The dryer is active only when compressed air actually needs to be dried. This approach achieves the required compressed air quality with maximum efficiency.",
+        "KAESER AS Series Screw Compressors\nAluminum plate heat exchanger\nThe dryer's aluminum heat exchanger is corrosion and contamination-resistant. Even with fluctuating airflow, the separate stainless steel condensate separator reliably removes the accumulating condensate from the air."
+      ],
+      "retrieved_chunk_ids": [
+        "PRD-001_chunk_018",
+        "PRD-005_chunk_019",
+        "PRD-005_chunk_023",
+        "PRD-005_chunk_020",
+        "PRD-001_chunk_020"
+      ],
+      "num_chunks": 5
+    },
+    {
+      "question": "How low can the cooler approach temperature get on the S series?",
+      "answer": "The cooler approach temperature on the S series can be as low as **11 °F**.",
+      "contexts": [
+        "KAESER SX, SM and SK Series (S Series) Screw Compressors\nHigh efficiency coolers with filter mat\nConveniently located on the outside of the unit, our standard high efficiency coolers provide maximum cooling resulting in approach\ntemperatures as low as 11°F for more moisture separation at the compressor discharge and better air quality. A filter mat simplifies cooler maintenance. Dirt and dust build up on the outside of the filter, where it is easily seen and removed. This extends cooler service intervals and increases thermal reserve for harsher\nconditions.",
+        "KAESER AS Series Screw Compressors\nHigh-efficiency coolers with filter mat\nConveniently located on the outside of the unit, our standard highefficiency coolers provide maximum cooling resulting in exceptionally low approach temperatures\nfor more moisture separation at the compressor discharge and better air quality. A filter mat simplifies cooler maintenance. Dirt and dust build up on the outside of the filter, where it is easily seen and removed. This extends cooler service intervals and increases thermal reserve for harsher conditions.",
+        "KAESER Industrial Rotary Screw Compressors, SX to HSD Series\nService-friendly Design\ncooler running motor. This also results in much lower approach temperatures, improving moisture separation and air quality.\nTo increase reliability and reduce maintenance costs, the coolers are conveniently located on the outside of the unit, where dust and dirt build-up are easily seen and can be removed without dismantling the cooler. A powerful fan pulls air through the coolers and creates a vacuum within the cabinet that effectively cools the motor even under severe operating conditions. Top exhaust allows for easy heat recovery and reduces the system footprint.",
+        "KAESER AS Series Screw Compressors\nParallel cooling design\nTwo separate cooling air inlet zones for the coolers and drive motor ensure optimum cooling. Drawing ambient air directly across the coolers and motor through separate zones eliminates preheating and results in longer lubricant life and a cooler running motor. This also results in much lower approach temperatures, improving moisture separation and air quality.\nTo increase reliability and reduce maintenance costs, the coolers are conveniently located on the outside of the unit, where dust and dirt build-up are easily seen and can be removed without dismantling the cooler. Top exhaust allows for easy heat recovery and reduces the system footprint.",
+        "KAESER SX, SM and SK Series (S Series) Screw Compressors\nOptimized air flow design\nAir is drawn into separate cooling zones for the drive motor and coolers. This \"split cooling\" design eliminates preheating, increasing cooling efficiency without increasing power consumption. Cooler temperatures also promote longer lubricant and motor life. Cooling air is exhausted through a single port at the top of the cabinet. Ducting this air enables heat recovery and further reduces noise.\nAir for compression enters through a separate grill on the right side of the cabinet. It is then filtered through a twostage air intake filter. This filter protects the airend and extends fluid change intervals.\nFresh cooling air\nRecirculated air\nExhaust air\nThe SX, SM, and SK units can be installed in a corner and still provide easy access for maintenance."
+      ],
+      "retrieved_chunk_ids": [
+        "PRD-005_chunk_011",
+        "PRD-001_chunk_008",
+        "BLW-002_chunk_016",
+        "PRD-001_chunk_016",
+        "PRD-005_chunk_016"
+      ],
+      "num_chunks": 5
+    }
+  ]
+}

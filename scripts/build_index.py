@@ -8,7 +8,11 @@ Usage:
 """
 
 import argparse
+import sys
 from pathlib import Path
+
+# Run as a script, sys.path[0] is scripts/, so `src` would not be importable.
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.retrieval.retriever import VectorStore
 
@@ -32,8 +36,8 @@ def main():
     parser.add_argument(
         "--collection",
         type=str,
-        default="documents",
-        help="Collection name",
+        default=None,
+        help="Collection name (default: retriever_config.yaml)",
     )
     parser.add_argument(
         "--reset",
@@ -55,15 +59,15 @@ def main():
     print("=" * 60)
     print(f"Embeddings: {embeddings_dir}")
     print(f"Vector DB:  {vectordb_dir}")
-    print(f"Collection: {args.collection}")
     print(f"Reset:      {args.reset}")
     print("=" * 60)
-    
+
     # Initialize vector store
     store = VectorStore(
         persist_dir=vectordb_dir,
         collection_name=args.collection,
     )
+    print(f"Collection: {store.collection_name}")
     
     # Index all embeddings
     total = store.index_all(

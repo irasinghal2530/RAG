@@ -3,33 +3,22 @@
 
 llm:
   # Model selection
-  provider: "gemini"
-  model_name: "gemini-3.8-flash"
+  provider: "groq"
+  model_name: "openai/gpt-oss-20b"
+  judge_model_name: "openai/gpt-oss-120b"
   temperature: 0.0
-  max_tokens: 1024
+  max_tokens: 2048
   
   # API settings
   api_base: null  # Optional custom endpoint
   timeout: 60
-  max_retries: 3
+  max_retries: 5
 
-# Prompt templates
-prompts:
-  system_template: |
-    You are a helpful assistant that answers questions based on the provided context.
-    Only use information from the context to answer. If the answer is not in the context,
-    say "I don't have enough information to answer this question."
-  
-  user_template: |
-    Context:
-    {context}
-    
-    Question: {question}
-    
-    Answer:
+# Prompt templates live in src/generation/prompt_builder.py
+# (DEFAULT_SYSTEM_TEMPLATE / DEFAULT_USER_TEMPLATE).
 
-# Generation settings
+# Generation settings (read by PromptBuilder)
 generation:
   include_sources: true
-  max_context_length: 4000
+  max_context_length: 12000
   chunk_separator: "\n\n---\n\n"

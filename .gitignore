@@ -1,3 +1,8 @@
 .env
 __pycache__
 data/
+# Ignore data artifacts and logs
+data/processed/
+data/*.json
+data/*.txt
+*.log

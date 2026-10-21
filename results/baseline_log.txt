@@ -1,0 +1,70 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+============================================================
+RAGAS Evaluation Suite
+============================================================
+Eval file:   data\eval_set.json
+Vector DB:   data/vectordb
+Top-K:       8
+Metrics:     All available
+============================================================
+Loaded 5 evaluation samples
+Loading embedding model: all-MiniLM-L6-v2
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights:  31%|███       | 32/103 [00:00<00:00, 313.68it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 818.46it/s]
+Model loaded. Dimension: 384
+Generator LLM initialized (openai/gpt-oss-20b)
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 1123.11it/s]
+Judge model: llama-3.3-70b-versatile (scores answers; does not generate them)
+
+============================================================
+Step 1: Running RAG Pipeline
+============================================================
+[1/5] Processing: What is known about SFC Belt Drive compressors?...
+[2/5] Processing: Up to what pressure do KAESER SIGMA PROFILE rotary...
+[3/5] Processing: What is the difference between belt drive and dire...
+[4/5] Processing: What is the automatic belt tensioning feature?...
+[5/5] Processing: What capacity does the ASD 40 compressor have?...
+
+============================================================
+Step 2: Computing RAGAS Metrics
+============================================================
+Evaluating sample 1/5...
+Warning: Failed to compute faithfulness: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Warning: Failed to compute answer_relevancy: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Warning: Failed to compute context_relevancy: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Warning: Failed to compute context_precision: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Warning: Failed to compute context_recall: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Evaluating sample 2/5...
+Warning: Failed to compute faithfulness: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Warning: Failed to compute answer_relevancy: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Warning: Failed to compute context_relevancy: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Warning: Failed to compute context_precision: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Warning: Failed to compute context_recall: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Evaluating sample 3/5...
+Warning: Failed to compute faithfulness: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Warning: Failed to compute answer_relevancy: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Warning: Failed to compute context_relevancy: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Warning: Failed to compute context_precision: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Warning: Failed to compute context_recall: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Evaluating sample 4/5...
+Warning: Failed to compute faithfulness: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Warning: Failed to compute answer_relevancy: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Warning: Failed to compute context_relevancy: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Warning: Failed to compute context_precision: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Warning: Failed to compute context_recall: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Evaluating sample 5/5...
+Warning: Failed to compute faithfulness: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Warning: Failed to compute answer_relevancy: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Warning: Failed to compute context_relevancy: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Warning: Failed to compute context_precision: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+Warning: Failed to compute context_recall: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}
+
+============================================================
+RAGAS Evaluation Results
+============================================================
+No metrics computed.
+
+Results saved to: results\baseline_ragas.json
+
+============================================================
+RAGAS Evaluation Complete!
+============================================================

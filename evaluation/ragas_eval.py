@@ -1,32 +1,20 @@
 """
 RAGAS Evaluation for RAG Pipeline.
 
-Implements RAGAS (Retrieval Augmented Generation Assessment) metrics:
-- Faithfulness: How grounded is the answer in the context
-- Answer Relevancy: How relevant is the answer to the question
-- Context Relevancy: How relevant is the retrieved context to the question
-- Context Precision: Are relevant chunks ranked higher
-- Context Recall: Does the context cover the ground truth answer
+A self-contained implementation of the RAGAS metrics
+(https://arxiv.org/abs/2309.15217); it does not use the `ragas` package.
 
-Usage:
-    from evaluation.ragas_eval import RagasEvaluator
-    
-    evaluator = RagasEvaluator()
-    metrics = evaluator.evaluate(
-        question="What is the maintenance schedule?",
-        answer="Oil should be checked every 1000 hours.",
-        contexts=["Oil must be checked every 1000 hours...", ...],
-        ground_truth="The maintenance requires oil checks every 1000 hours."
-    )
+The RAG generator answers questions. A separate, larger judge LLM scores
+those answers. Every judge call runs in JSON mode so verdicts parse reliably.
 
-Reference:
-    RAGAS Paper: https://arxiv.org/abs/2309.15217
+When the judge's reply cannot be parsed, the metric is recorded as failed
+(None) instead of 0.0, so a broken judge cannot pass for a broken pipeline.
 """
 
-import re
 import json
-from typing import List, Dict, Any, Optional
-from dataclasses import dataclass, asdict
+import re
+from dataclasses import asdict, dataclass, field
+from typing import Any, Dict, List, Optional
 
 try:
     from dotenv import load_dotenv
@@ -35,84 +23,90 @@ except ImportError:
     pass
 
 
-# ==============================================================================
-# Prompt Templates for RAGAS Metrics
-# ==============================================================================
-
-FAITHFULNESS_STATEMENT_EXTRACTION_PROMPT = """Given a question and answer, extract all factual statements from the answer.
-Each statement should be a simple, atomic claim that can be verified independently.
+FAITHFULNESS_STATEMENT_EXTRACTION_PROMPT = """Break the answer into atomic factual claims that could be checked against a document.
+Each claim must stand alone: replace pronouns with the names they refer to.
+Skip filler such as "Here is the answer" and statements about missing information.
+Return JSON only: {{"statements": ["claim 1", "claim 2"]}}
 
 Question: {question}
 Answer: {answer}
 
-Extract all statements as a JSON list of strings. Only output the JSON list, nothing else.
-Example output: ["Statement 1", "Statement 2", "Statement 3"]
-
-Statements:"""
+Example: {{"statements": ["The ASD 40 delivers 192 cfm at 125 psig."]}}"""
 
 
-FAITHFULNESS_VERIFICATION_PROMPT = """Given a context and a statement, determine if the statement is supported by the context.
+FAITHFULNESS_BATCH_VERIFY_PROMPT = """You verify whether statements are supported by the context.
+A statement is supported if it can be directly inferred from the context, including by combining
+facts from different passages. Paraphrase is allowed; numbers and units must match.
+It is unsupported if it adds facts the context does not contain or contradicts it.
+Return JSON only: {{"verdicts": [true, false]}} with exactly {n} booleans, one per statement, same order.
 
 Context:
 {context}
 
-Statement: {statement}
+Statements:
+{statements}
+"""
 
-Can this statement be inferred from the context? 
-Respond with exactly "Yes" or "No"."""
 
-
-ANSWER_RELEVANCY_PROMPT = """Given the following answer, generate a question that this answer is trying to address.
-Be specific and try to capture the main intent of the answer.
+ANSWER_RELEVANCY_PROMPT = """Write {n} different questions that the answer below is responding to.
+Also decide if the answer is noncommittal: evasive, vague, or saying it cannot answer
+(for example "I don't know" or "the context does not contain this").
+Return JSON only: {{"questions": ["q1", "q2", "q3"], "noncommittal": false}}
 
 Answer: {answer}
+"""
 
-Generated question:"""
 
-
-CONTEXT_RELEVANCY_PROMPT = """Given a question and a context passage, rate how relevant the context is to answering the question.
+CONTEXT_RELEVANCY_BATCH_PROMPT = """Rate how useful each context passage is for answering the question.
+Score each passage from 0.0 to 1.0:
+- 1.0 directly contains the facts needed to answer
+- 0.5 related but missing key facts
+- 0.0 unrelated
+Return JSON only: {{"scores": [1.0, 0.0]}} with exactly {n} scores, one per passage, same order.
 
 Question: {question}
 
-Context: {context}
-
-Rate the relevance on a scale from 0 to 1:
-- 1.0: Directly relevant, contains information needed to answer the question
-- 0.5: Partially relevant, contains some related information
-- 0.0: Not relevant, no useful information for the question
-
-Respond with just a number between 0 and 1."""
+Passages:
+{passages}
+"""
 
 
-CONTEXT_RECALL_PROMPT = """Given a ground truth answer and a set of context passages, determine what fraction of the ground truth information is present in the contexts.
+CONTEXT_PRECISION_BATCH_PROMPT = """For each context passage, decide if it was useful in arriving at the reference answer
+to the question (it contains at least one fact the reference answer uses).
+Return JSON only: {{"relevant": [true, false]}} with exactly {n} booleans, one per passage, same order.
+
+Question: {question}
+
+Reference answer: {reference}
+
+Passages:
+{passages}
+"""
+
+
+CONTEXT_RECALL_PROMPT = """Split the ground truth into atomic facts. For each fact, decide if the contexts support it.
+Return JSON only, with one "supported" boolean per statement:
+{{"statements": ["fact 1", "fact 2"], "supported": [true, false]}}
 
 Ground Truth: {ground_truth}
 
 Contexts:
 {contexts}
-
-Extract statements from the ground truth and check if each is supported by the contexts.
-Respond with a JSON object containing:
-- "statements": list of statements from ground truth
-- "supported": list of booleans indicating if each statement is supported
-
-Example:
-{{"statements": ["fact 1", "fact 2"], "supported": [true, false]}}
-
-Response:"""
+"""
 
 
-CONTEXT_PRECISION_PROMPT = """Given a question and a context passage, determine if this context is useful for answering the question.
+METRIC_NAMES = [
+    "faithfulness",
+    "answer_relevancy",
+    "context_relevancy",
+    "context_precision",
+    "context_recall",
+]
 
-Question: {question}
-Context: {context}
 
-Is this context useful for answering the question? Respond with exactly "Yes" or "No"."""
+class JudgeOutputError(ValueError):
+    """The judge reply could not be turned into a score."""
 
-
-# ==============================================================================
-# Data Classes
-# ==============================================================================
 
 @dataclass
 class RagasInput:
@@ -121,388 +115,254 @@ class RagasInput:
     answer: str
     contexts: List[str]
     ground_truth: Optional[str] = None
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
 
 
 @dataclass
 class RagasMetrics:
-    """Output metrics from RAGAS evaluation."""
+    """Output metrics from RAGAS evaluation. `failed` maps metric -> error."""
     faithfulness: Optional[float] = None
     answer_relevancy: Optional[float] = None
     context_relevancy: Optional[float] = None
     context_precision: Optional[float] = None
     context_recall: Optional[float] = None
-    
+    failed: Dict[str, str] = field(default_factory=dict)
+
     def to_dict(self) -> Dict[str, float]:
-        return {k: v for k, v in asdict(self).items() if v is not None}
-    
+        return {k: getattr(self, k) for k in METRIC_NAMES if getattr(self, k) is not None}
+
     def __repr__(self) -> str:
         metrics = self.to_dict()
-        return "RagasMetrics(" + ", ".join(f"{k}={v:.4f}" for k, v in metrics.items()) + ")"
+        text = ", ".join(f"{k}={v:.4f}" for k, v in metrics.items())
+        if self.failed:
+            text += f", failed={sorted(self.failed)}"
+        return f"RagasMetrics({text})"
 
 
-# ==============================================================================
-# RAGAS Evaluator
-# ==============================================================================
+def _as_bool(value: Any) -> bool:
+    """Strict truthiness: bool("false") is True in Python, so parse strings explicitly."""
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return value != 0
+    if isinstance(value, str):
+        lowered = value.strip().lower()
+        if lowered in {"true", "yes", "1", "supported", "relevant"}:
+            return True
+        if lowered in {"false", "no", "0", "not supported", "unsupported", "irrelevant"}:
+            return False
+    raise JudgeOutputError(f"not a boolean verdict: {value!r}")
+
 
 class RagasEvaluator:
     """
-    RAGAS Evaluator for RAG pipeline assessment.
-    
-    Implements the following metrics:
-    
-    1. Faithfulness (0-1): Measures if the answer is grounded in the context.
-       Higher = answer claims are supported by context.
-       
-    2. Answer Relevancy (0-1): Measures if the answer addresses the question.
-       Uses reverse question generation and cosine similarity.
-       
-    3. Context Relevancy (0-1): Measures if retrieved contexts are relevant.
-       Average relevancy score across all context chunks.
-       
-    4. Context Precision (0-1): Measures if relevant chunks appear first.
-       Weighted by rank position (earlier = better).
-       
-    5. Context Recall (0-1): Measures if context covers ground truth.
-       Fraction of ground truth statements found in context.
+    RAGAS evaluator. Uses a dedicated judge model, not the RAG generator.
     """
-    
+
     def __init__(
         self,
         model_name: Optional[str] = None,
         api_key: Optional[str] = None,
         embedding_model: Optional[str] = None,
+        max_context_chars: int = 16000,
     ):
-        """
-        Initialize the RAGAS evaluator.
-        
-        Args:
-            model_name: Gemini model for evaluation.
-            api_key: Google API key (defaults to GOOGLE_API_KEY env var).
-            embedding_model: Model for embeddings (for answer relevancy).
-        """
-        from src.generation.llm_client import LLMClient
+        from src.generation.llm_client import create_judge_client
 
         self.client = None
         self.embedder = None
+        self.max_context_chars = max_context_chars
 
         try:
-            self.client = LLMClient(model_name=model_name, api_key=api_key)
+            self.client = create_judge_client(model_name=model_name, api_key=api_key)
             self.model_name = self.client.model_name
         except (ImportError, ValueError):
             self.client = None
             self.model_name = model_name
-        
-        # Try to load sentence transformer for embeddings
+
         try:
             from sentence_transformers import SentenceTransformer
             self.embedder = SentenceTransformer(embedding_model or "all-MiniLM-L6-v2")
         except ImportError:
             pass
-    
-    def _call_llm(self, prompt: str, max_tokens: int = 500) -> str:
-        """Call LLM and return response text."""
+
+    def _call_judge(self, prompt: str) -> Any:
+        """Call the judge in JSON mode and return the parsed object."""
         if not self.client:
-            raise ValueError("Gemini client not available. Set GOOGLE_API_KEY.")
-        return self.client.generate_text(prompt, max_tokens=max_tokens)
-    
+            raise ValueError("Judge LLM not available. Set GROQ_API_KEY.")
+        raw = self.client.generate_text(prompt, json_mode=True)
+        parsed = self._extract_json(raw)
+        if parsed is None:
+            raise JudgeOutputError(f"judge returned no JSON: {raw[:200]!r}")
+        return parsed
+
     def _extract_json(self, text: str) -> Any:
-        """Extract JSON from LLM response."""
-        # Try direct parsing
+        cleaned = text.strip()
+        cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned)
+        cleaned = re.sub(r"\s*```$", "", cleaned)
         try:
-            return json.loads(text)
+            return json.loads(cleaned)
         except json.JSONDecodeError:
             pass
-        
-        # Try to find JSON in the text
-        json_match = re.search(r'\[.*?\]|\{.*?\}', text, re.DOTALL)
-        if json_match:
+
+        decoder = json.JSONDecoder()
+        for match in re.finditer(r"[\[{]", cleaned):
             try:
-                return json.loads(json_match.group())
+                value, _ = decoder.raw_decode(cleaned[match.start():])
+                return value
             except json.JSONDecodeError:
-                pass
-        
+                continue
         return None
-    
-    def _cosine_similarity(self, vec1: List[float], vec2: List[float]) -> float:
-        """Compute cosine similarity between two vectors."""
-        import math
-        dot = sum(a * b for a, b in zip(vec1, vec2))
-        norm1 = math.sqrt(sum(a * a for a in vec1))
-        norm2 = math.sqrt(sum(b * b for b in vec2))
-        if norm1 == 0 or norm2 == 0:
-            return 0.0
-        return dot / (norm1 * norm2)
-    
-    # --------------------------------------------------------------------------
-    # Faithfulness Metric
-    # --------------------------------------------------------------------------
-    
+
+    def _get_list(self, parsed: Any, key: str, expected_len: Optional[int] = None) -> List[Any]:
+        values = parsed.get(key) if isinstance(parsed, dict) else parsed
+        if not isinstance(values, list):
+            raise JudgeOutputError(f"expected a '{key}' list, got {str(parsed)[:200]}")
+        if expected_len is not None and len(values) != expected_len:
+            raise JudgeOutputError(
+                f"'{key}' has {len(values)} items, expected {expected_len}"
+            )
+        return values
+
+    def _format_passages(self, contexts: List[str]) -> str:
+        parts = []
+        for i, ctx in enumerate(contexts, start=1):
+            clipped = ctx[:2500]
+            parts.append(f"[{i}] {clipped}")
+        return "\n\n".join(parts)
+
+    def _join_contexts(self, contexts: List[str]) -> str:
+        return "\n\n---\n\n".join(contexts)[: self.max_context_chars]
+
     def compute_faithfulness(
         self,
         question: str,
         answer: str,
         contexts: List[str],
     ) -> float:
-        """
-        Compute faithfulness score.
-        
-        Measures whether the claims in the answer are supported by the context.
-        
-        Process:
-        1. Extract factual statements from the answer
-        2. For each statement, verify if it can be inferred from context
-        3. Faithfulness = supported_statements / total_statements
-        
-        Args:
-            question: The user question.
-            answer: The generated answer.
-            contexts: List of retrieved context strings.
-            
-        Returns:
-            float: Faithfulness score (0-1).
-        """
         if not contexts or not answer:
             return 0.0
-        
-        # Step 1: Extract statements from answer
+
         extraction_prompt = FAITHFULNESS_STATEMENT_EXTRACTION_PROMPT.format(
             question=question,
             answer=answer,
         )
-        
-        response = self._call_llm(extraction_prompt)
-        statements = self._extract_json(response)
-        
-        if not statements or not isinstance(statements, list):
-            # Fallback: treat entire answer as one statement
-            statements = [answer]
-        
-        # Step 2: Verify each statement against context
-        combined_context = "\n\n".join(contexts)
-        supported_count = 0
-        
-        for statement in statements:
-            verification_prompt = FAITHFULNESS_VERIFICATION_PROMPT.format(
-                context=combined_context,
-                statement=statement,
-            )
-            
-            verdict = self._call_llm(verification_prompt, max_tokens=10)
-            if verdict.lower().strip() in ["yes", "true", "1"]:
-                supported_count += 1
-        
-        return supported_count / len(statements) if statements else 0.0
-    
-    # --------------------------------------------------------------------------
-    # Answer Relevancy Metric
-    # --------------------------------------------------------------------------
-    
+        statements = self._get_list(self._call_judge(extraction_prompt), "statements")
+        statements = [str(s).strip() for s in statements if str(s).strip()]
+        if not statements:
+            # Nothing checkable (e.g. "I don't have enough information"): no hallucination.
+            return 1.0
+
+        numbered = "\n".join(f"{i+1}. {s}" for i, s in enumerate(statements))
+        verify_prompt = FAITHFULNESS_BATCH_VERIFY_PROMPT.format(
+            context=self._join_contexts(contexts),
+            statements=numbered,
+            n=len(statements),
+        )
+        verdicts = self._get_list(self._call_judge(verify_prompt), "verdicts", len(statements))
+        supported = sum(1 for v in verdicts if _as_bool(v))
+        return supported / len(statements)
+
     def compute_answer_relevancy(
         self,
         question: str,
         answer: str,
         num_generations: int = 3,
     ) -> float:
-        """
-        Compute answer relevancy score.
-        
-        Measures whether the answer addresses the question using reverse
-        question generation and semantic similarity.
-        
-        Process:
-        1. Generate N questions that the answer might be addressing
-        2. Compute embedding similarity between original and generated questions
-        3. Answer Relevancy = average similarity
-        
-        Args:
-            question: The original question.
-            answer: The generated answer.
-            num_generations: Number of questions to generate.
-            
-        Returns:
-            float: Answer relevancy score (0-1).
-        """
-        if not answer or not self.embedder:
+        if not answer:
             return 0.0
-        
-        # Generate reverse questions
-        generated_questions = []
-        for _ in range(num_generations):
-            prompt = ANSWER_RELEVANCY_PROMPT.format(answer=answer)
-            gen_question = self._call_llm(prompt, max_tokens=100)
-            generated_questions.append(gen_question)
-        
-        # Compute embeddings
-        original_embedding = self.embedder.encode(question).tolist()
-        
-        similarities = []
-        for gen_q in generated_questions:
-            gen_embedding = self.embedder.encode(gen_q).tolist()
-            sim = self._cosine_similarity(original_embedding, gen_embedding)
-            similarities.append(sim)
-        
-        return sum(similarities) / len(similarities) if similarities else 0.0
-    
-    # --------------------------------------------------------------------------
-    # Context Relevancy Metric
-    # --------------------------------------------------------------------------
-    
+        if not self.embedder:
+            raise ValueError("sentence-transformers is required for answer_relevancy")
+
+        prompt = ANSWER_RELEVANCY_PROMPT.format(answer=answer, n=num_generations)
+        parsed = self._call_judge(prompt)
+        generated = self._get_list(parsed, "questions")
+        generated = [str(q).strip() for q in generated if str(q).strip()][:num_generations]
+        if not generated:
+            raise JudgeOutputError("judge generated no questions")
+
+        if isinstance(parsed, dict) and _as_bool(parsed.get("noncommittal", False)):
+            return 0.0
+
+        vectors = self.embedder.encode([question] + generated, normalize_embeddings=True)
+        similarities = [float(vectors[0] @ vec) for vec in vectors[1:]]
+        return sum(similarities) / len(similarities)
+
     def compute_context_relevancy(
         self,
         question: str,
         contexts: List[str],
     ) -> float:
-        """
-        Compute context relevancy score.
-        
-        Measures how relevant the retrieved contexts are to the question.
-        
-        Process:
-        1. For each context chunk, rate its relevancy to the question
-        2. Context Relevancy = average of all chunk relevancy scores
-        
-        Args:
-            question: The user question.
-            contexts: List of retrieved context strings.
-            
-        Returns:
-            float: Context relevancy score (0-1).
-        """
         if not contexts:
             return 0.0
-        
-        relevancy_scores = []
-        
-        for context in contexts:
-            prompt = CONTEXT_RELEVANCY_PROMPT.format(
-                question=question,
-                context=context,
-            )
-            
-            response = self._call_llm(prompt, max_tokens=10)
-            
+
+        prompt = CONTEXT_RELEVANCY_BATCH_PROMPT.format(
+            question=question,
+            passages=self._format_passages(contexts),
+            n=len(contexts),
+        )
+        scores = self._get_list(self._call_judge(prompt), "scores", len(contexts))
+        numeric = []
+        for score in scores:
             try:
-                score = float(response.strip())
-                score = max(0.0, min(1.0, score))
-            except ValueError:
-                score = 0.5  # Default if parsing fails
-            
-            relevancy_scores.append(score)
-        
-        return sum(relevancy_scores) / len(relevancy_scores)
-    
-    # --------------------------------------------------------------------------
-    # Context Precision Metric
-    # --------------------------------------------------------------------------
-    
+                numeric.append(max(0.0, min(1.0, float(score))))
+            except (TypeError, ValueError):
+                raise JudgeOutputError(f"not a score: {score!r}")
+        return sum(numeric) / len(numeric)
+
     def compute_context_precision(
         self,
         question: str,
         contexts: List[str],
+        reference: Optional[str] = None,
     ) -> float:
         """
-        Compute context precision score.
-        
-        Measures if relevant contexts appear earlier in the ranking.
-        Uses Average Precision calculation.
-        
-        Process:
-        1. For each context, determine if it's relevant (binary)
-        2. Calculate precision at each relevant position
-        3. Context Precision = average of precisions at relevant positions
-        
-        Args:
-            question: The user question.
-            contexts: List of retrieved context strings (ranked).
-            
-        Returns:
-            float: Context precision score (0-1).
+        Average precision of the ranking. Relevance is judged against the
+        reference answer (ground truth) when given, as RAGAS does; otherwise
+        against the generated answer, or the question as a last resort.
         """
         if not contexts:
             return 0.0
-        
-        # Determine relevancy for each context
-        relevancy = []
-        for context in contexts:
-            prompt = CONTEXT_PRECISION_PROMPT.format(
-                question=question,
-                context=context,
-            )
-            
-            verdict = self._call_llm(prompt, max_tokens=10)
-            is_relevant = verdict.lower().strip() in ["yes", "true", "1"]
-            relevancy.append(is_relevant)
-        
-        # Calculate Average Precision
+
+        prompt = CONTEXT_PRECISION_BATCH_PROMPT.format(
+            question=question,
+            reference=reference or "(not available; judge usefulness for the question)",
+            passages=self._format_passages(contexts),
+            n=len(contexts),
+        )
+        flags = self._get_list(self._call_judge(prompt), "relevant", len(contexts))
+        relevancy = [_as_bool(v) for v in flags]
         if not any(relevancy):
             return 0.0
-        
+
         precisions = []
         relevant_count = 0
-        
         for i, is_rel in enumerate(relevancy):
             if is_rel:
                 relevant_count += 1
-                precision_at_i = relevant_count / (i + 1)
-                precisions.append(precision_at_i)
-        
-        return sum(precisions) / len(precisions) if precisions else 0.0
-    
-    # --------------------------------------------------------------------------
-    # Context Recall Metric
-    # --------------------------------------------------------------------------
-    
+                precisions.append(relevant_count / (i + 1))
+        return sum(precisions) / len(precisions)
+
     def compute_context_recall(
         self,
         contexts: List[str],
         ground_truth: str,
     ) -> float:
-        """
-        Compute context recall score.
-        
-        Measures what fraction of the ground truth is captured by the contexts.
-        
-        Process:
-        1. Extract statements from ground truth
-        2. Check if each statement is supported by any context
-        3. Context Recall = supported_statements / total_statements
-        
-        Args:
-            contexts: List of retrieved context strings.
-            ground_truth: The ground truth answer.
-            
-        Returns:
-            float: Context recall score (0-1).
-        """
         if not contexts or not ground_truth:
             return 0.0
-        
-        combined_contexts = "\n\n---\n\n".join(contexts)
-        
+
         prompt = CONTEXT_RECALL_PROMPT.format(
             ground_truth=ground_truth,
-            contexts=combined_contexts,
+            contexts=self._join_contexts(contexts),
         )
-        
-        response = self._call_llm(prompt, max_tokens=500)
-        result = self._extract_json(response)
-        
-        if not result or not isinstance(result, dict):
-            return 0.0
-        
-        supported = result.get("supported", [])
+        parsed = self._call_judge(prompt)
+        statements = self._get_list(parsed, "statements")
+        supported = self._get_list(parsed, "supported", len(statements))
         if not supported:
-            return 0.0
-        
-        return sum(1 for s in supported if s) / len(supported)
-    
-    # --------------------------------------------------------------------------
-    # Main Evaluation Method
-    # --------------------------------------------------------------------------
-    
+            raise JudgeOutputError("judge returned no ground-truth statements")
+        return sum(1 for s in supported if _as_bool(s)) / len(supported)
+
     def evaluate(
         self,
         question: str,
@@ -511,73 +371,45 @@ class RagasEvaluator:
         ground_truth: Optional[str] = None,
         metrics: Optional[List[str]] = None,
     ) -> RagasMetrics:
-        """
-        Compute RAGAS metrics for a single sample.
-        
-        Args:
-            question: The user question.
-            answer: The generated answer.
-            contexts: List of retrieved context strings.
-            ground_truth: Optional ground truth answer (for recall).
-            metrics: List of metrics to compute. If None, computes all available.
-                     Options: "faithfulness", "answer_relevancy", "context_relevancy",
-                              "context_precision", "context_recall"
-        
-        Returns:
-            RagasMetrics: Computed metrics.
-        """
         available_metrics = {
             "faithfulness": lambda: self.compute_faithfulness(question, answer, contexts),
             "answer_relevancy": lambda: self.compute_answer_relevancy(question, answer),
             "context_relevancy": lambda: self.compute_context_relevancy(question, contexts),
-            "context_precision": lambda: self.compute_context_precision(question, contexts),
+            "context_precision": lambda: self.compute_context_precision(
+                question, contexts, reference=ground_truth or answer or None
+            ),
         }
-        
         if ground_truth:
             available_metrics["context_recall"] = lambda: self.compute_context_recall(
                 contexts, ground_truth
             )
-        
-        # Select metrics to compute
+
         if metrics is None:
             metrics_to_compute = list(available_metrics.keys())
         else:
             metrics_to_compute = [m for m in metrics if m in available_metrics]
-        
+
         results = RagasMetrics()
-        
         for metric_name in metrics_to_compute:
             try:
                 score = available_metrics[metric_name]()
                 setattr(results, metric_name, score)
             except Exception as e:
+                results.failed[metric_name] = f"{type(e).__name__}: {e}"
                 print(f"Warning: Failed to compute {metric_name}: {e}")
-        
         return results
-    
+
     def evaluate_batch(
         self,
         samples: List[RagasInput],
         metrics: Optional[List[str]] = None,
         verbose: bool = True,
     ) -> Dict[str, Any]:
-        """
-        Evaluate multiple samples and compute aggregate metrics.
-        
-        Args:
-            samples: List of RagasInput samples.
-            metrics: List of metrics to compute.
-            verbose: Print progress.
-            
-        Returns:
-            dict: Aggregate metrics and per-sample results.
-        """
         all_results = []
-        
+        all_failures = []
         for i, sample in enumerate(samples):
             if verbose:
                 print(f"Evaluating sample {i+1}/{len(samples)}...")
-            
             result = self.evaluate(
                 question=sample.question,
                 answer=sample.answer,
@@ -586,29 +418,26 @@ class RagasEvaluator:
                 metrics=metrics,
             )
             all_results.append(result.to_dict())
-        
-        # Compute averages
+            all_failures.append(result.failed)
+
         aggregates = {}
-        if all_results:
-            all_keys = set()
-            for r in all_results:
-                all_keys.update(r.keys())
-            
-            for key in all_keys:
-                values = [r[key] for r in all_results if key in r and r[key] is not None]
-                if values:
-                    aggregates[f"avg_{key}"] = sum(values) / len(values)
-        
+        failure_counts = {}
+        for key in METRIC_NAMES:
+            values = [r[key] for r in all_results if key in r]
+            if values:
+                aggregates[f"avg_{key}"] = sum(values) / len(values)
+            failed = sum(1 for f in all_failures if key in f)
+            if failed:
+                failure_counts[key] = failed
+
         return {
             "aggregate_metrics": aggregates,
+            "failure_counts": failure_counts,
             "per_sample_metrics": all_results,
+            "per_sample_failures": all_failures,
             "num_samples": len(samples),
         }
 
-
-# ==============================================================================
-# Convenience Functions
-# ==============================================================================
 
 def evaluate_ragas(
     question: str,
@@ -617,19 +446,6 @@ def evaluate_ragas(
     ground_truth: Optional[str] = None,
     **kwargs,
 ) -> Dict[str, float]:
-    """
-    Convenience function to evaluate a single RAG response.
-    
-    Args:
-        question: The user question.
-        answer: The generated answer.
-        contexts: List of retrieved context strings.
-        ground_truth: Optional ground truth answer.
-        **kwargs: Additional arguments for RagasEvaluator.
-        
-    Returns:
-        dict: RAGAS metrics.
-    """
     evaluator = RagasEvaluator(**kwargs)
     result = evaluator.evaluate(question, answer, contexts, ground_truth)
     return result.to_dict()
@@ -638,15 +454,6 @@ def evaluate_ragas(
 def create_ragas_dataset(
     eval_data: List[Dict[str, Any]],
 ) -> List[RagasInput]:
-    """
-    Convert evaluation data to RAGAS input format.
-    
-    Args:
-        eval_data: List of dicts with question, answer, contexts, etc.
-        
-    Returns:
-        list: List of RagasInput objects.
-    """
     samples = []
     for item in eval_data:
         sample = RagasInput(
@@ -659,12 +466,7 @@ def create_ragas_dataset(
     return samples
 
 
-# ==============================================================================
-# Main Demo
-# ==============================================================================
-
 if __name__ == "__main__":
-    # Demo usage
     sample = RagasInput(
         question="What is the maintenance schedule?",
         answer="The maintenance schedule requires checking oil levels every 1000 hours and replacing filters during regular intervals.",
@@ -675,25 +477,25 @@ if __name__ == "__main__":
         ],
         ground_truth="Oil levels must be checked every 1000 hours. Filters need regular replacement.",
     )
-    
+
     evaluator = RagasEvaluator()
-    
     if evaluator.client:
         print("Computing RAGAS metrics...")
         print("=" * 60)
+        print(f"Judge model: {evaluator.model_name}")
         print(f"Question: {sample.question}")
         print(f"Answer: {sample.answer}")
         print("=" * 60)
-        
         metrics = evaluator.evaluate(
             question=sample.question,
             answer=sample.answer,
             contexts=sample.contexts,
             ground_truth=sample.ground_truth,
         )
-        
         print("\nRAGAS Metrics:")
         for name, value in metrics.to_dict().items():
             print(f"  {name}: {value:.4f}")
+        for name, error in metrics.failed.items():
+            print(f"  {name}: FAILED ({error})")
     else:
-        print("Set GOOGLE_API_KEY environment variable for RAGAS evaluation")
+        print("Set GROQ_API_KEY for RAGAS evaluation")

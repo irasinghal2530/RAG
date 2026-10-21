@@ -12,12 +12,17 @@ Usage:
 
 from typing import List, Dict, Any, Optional
 
+from src.config import load_llm_config
+
 
 # Default prompt templates
-DEFAULT_SYSTEM_TEMPLATE = """You are a helpful assistant that answers questions based on the provided context.
-Only use information from the context to answer. If the answer is not in the context,
-say "I don't have enough information to answer this question."
-Be concise and accurate in your responses."""
+DEFAULT_SYSTEM_TEMPLATE = """You are a technical assistant that answers questions using only the provided context.
+Answer the question directly in the first sentence, as a full sentence that names the product or component
+it is about (not a bare value such as "Up to 217 psig."). Then add only the supporting facts that answer it:
+model names, numeric specifications, units, and ranges exactly as written in the context.
+If a table is split across lines (model name then numbers), reconstruct the row using nearby column headers.
+Do not add background, general knowledge, or facts about other products that the question did not ask about.
+If the context is incomplete, answer with what is present and state what is missing."""
 
 DEFAULT_USER_TEMPLATE = """Context:
 {context}
@@ -34,13 +39,14 @@ class PromptBuilder:
         self,
         system_template: Optional[str] = None,
         user_template: Optional[str] = None,
-        chunk_separator: str = "\n\n---\n\n",
-        max_context_length: int = 4000,
-        include_sources: bool = True,
+        chunk_separator: Optional[str] = None,
+        max_context_length: Optional[int] = None,
+        include_sources: Optional[bool] = None,
     ):
         """
-        Initialize the prompt builder.
-        
+        Initialize the prompt builder. Unset settings come from the
+        `generation` section of llm_config.yaml.
+
         Args:
             system_template: System prompt template.
             user_template: User prompt template with {context} and {question}.
@@ -48,11 +54,14 @@ class PromptBuilder:
             max_context_length: Maximum context length in characters.
             include_sources: Include source citations in context.
         """
+        cfg = load_llm_config().get("generation", {})
         self.system_template = system_template or DEFAULT_SYSTEM_TEMPLATE
         self.user_template = user_template or DEFAULT_USER_TEMPLATE
-        self.chunk_separator = chunk_separator
-        self.max_context_length = max_context_length
-        self.include_sources = include_sources
+        self.chunk_separator = chunk_separator or cfg.get("chunk_separator", "\n\n---\n\n")
+        self.max_context_length = max_context_length or cfg.get("max_context_length", 12000)
+        self.include_sources = (
+            cfg.get("include_sources", True) if include_sources is None else include_sources
+        )
     
     def _format_chunk(
         self,
@@ -65,6 +74,8 @@ class PromptBuilder:
         if self.include_sources:
             metadata = chunk.get("metadata", {})
             source = metadata.get("document_id", "Unknown")
+            if metadata.get("document_title"):
+                source = f"{source} ({metadata['document_title']})"
             pages = ""
             if metadata.get("page_start"):
                 pages = f", pages {metadata.get('page_start')}-{metadata.get('page_end', metadata.get('page_start'))}"
@@ -76,22 +87,24 @@ class PromptBuilder:
     def _build_context(
         self,
         chunks: List[Dict[str, Any]],
-    ) -> str:
-        """Build context string from chunks."""
+    ) -> tuple:
+        """Build context string from chunks. Returns (context, chunks that fit)."""
         formatted_chunks = []
+        used_chunks = []
         total_length = 0
-        
+
         for i, chunk in enumerate(chunks, start=1):
             formatted = self._format_chunk(chunk, i)
-            
+
             # Check length limit
             if total_length + len(formatted) > self.max_context_length:
                 break
-            
+
             formatted_chunks.append(formatted)
+            used_chunks.append(chunk)
             total_length += len(formatted) + len(self.chunk_separator)
-        
-        return self.chunk_separator.join(formatted_chunks)
+
+        return self.chunk_separator.join(formatted_chunks), used_chunks
     
     def build(
         self,
@@ -108,18 +121,19 @@ class PromptBuilder:
         Returns:
             dict: Contains 'system' and 'user' prompt strings.
         """
-        context = self._build_context(chunks)
-        
+        context, used_chunks = self._build_context(chunks)
+
         user_prompt = self.user_template.format(
             context=context,
             question=query,
         )
-        
+
         return {
             "system": self.system_template,
             "user": user_prompt,
             "context": context,
-            "chunks_used": len(chunks),
+            "chunks_used": len(used_chunks),
+            "used_chunks": used_chunks,
         }
     
     def build_messages(

@@ -10,6 +10,7 @@ Usage:
     scores = evaluator.evaluate(question, answer, context)
 """
 
+import re
 from typing import List, Dict, Any, Optional
 
 try:
@@ -66,25 +67,28 @@ class AnswerEvaluator:
             model_name: Gemini model for evaluation.
             api_key: API key (defaults to GOOGLE_API_KEY env var).
         """
-        from src.generation.llm_client import LLMClient
+        from src.generation.llm_client import create_judge_client
 
         self.client = None
 
         try:
-            self.client = LLMClient(model_name=model_name, api_key=api_key)
+            self.client = create_judge_client(model_name=model_name, api_key=api_key)
             self.model_name = self.client.model_name
         except (ImportError, ValueError):
             self.client = None
             self.model_name = model_name
     
     def _call_llm(self, prompt: str) -> float:
-        """Call LLM and parse score."""
+        """Call judge LLM and parse score."""
         if not self.client:
             return 0.5
 
         try:
-            score = float(self.client.generate_text(prompt, max_tokens=10))
-            return max(0.0, min(1.0, score))
+            raw = self.client.generate_text(prompt, max_tokens=32)
+            match = re.search(r"\b(0(?:\.\d+)?|1(?:\.0+)?)\b", raw)
+            if not match:
+                return 0.5
+            return max(0.0, min(1.0, float(match.group(1))))
         except (ValueError, AttributeError):
             return 0.5
     
@@ -226,5 +230,5 @@ if __name__ == "__main__":
         print(f"  Faithfulness: {scores['faithfulness']:.2f}")
         print(f"  Relevancy: {scores['relevancy']:.2f}")
     else:
-        print("Set GOOGLE_API_KEY for LLM-based evaluation")
+        print("Set GROQ_API_KEY for LLM-based evaluation")
         print("Using default scores: 0.5")

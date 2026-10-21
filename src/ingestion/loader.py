@@ -25,30 +25,40 @@ from docling.document_converter import (
     PdfFormatOption,
 )
 
+from src.config import load_retriever_config
+
 
 class DocumentLoader:
     """Unified document loader supporting multiple formats."""
     
     def __init__(
         self,
-        do_ocr: bool = False,
-        do_table_structure: bool = True,
-        generate_picture_images: bool = True,
-        images_scale: float = 2.0,
+        do_ocr: Optional[bool] = None,
+        do_table_structure: Optional[bool] = None,
+        generate_picture_images: Optional[bool] = None,
+        images_scale: Optional[float] = None,
     ):
         """
-        Initialize the document loader.
-        
+        Initialize the document loader. Unset arguments come from the
+        `processing` section of retriever_config.yaml.
+
         Args:
             do_ocr: Enable OCR for scanned documents.
             do_table_structure: Extract table structure.
             generate_picture_images: Extract images from documents.
             images_scale: Scale factor for extracted images.
         """
-        self.do_ocr = do_ocr
-        self.do_table_structure = do_table_structure
-        self.generate_picture_images = generate_picture_images
-        self.images_scale = images_scale
+        cfg = load_retriever_config().get("processing", {})
+
+        def setting(value, key, default):
+            return cfg.get(key, default) if value is None else value
+
+        self.do_ocr = setting(do_ocr, "do_ocr", False)
+        self.do_table_structure = setting(do_table_structure, "do_table_structure", True)
+        self.generate_picture_images = setting(
+            generate_picture_images, "generate_picture_images", True
+        )
+        self.images_scale = setting(images_scale, "images_scale", 2.0)
         self._converter = None
     
     @property

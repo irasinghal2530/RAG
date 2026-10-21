@@ -1,47 +1,44 @@
 # Retriever Configuration for RAG Pipeline
-# Settings for document retrieval and search
+# Settings for document retrieval and search.
+# These values are loaded by src/config.py and used by the Retriever,
+# the embedder and the evaluation scripts.
 
 # Embedding model settings
 embedding:
   model_name: "all-MiniLM-L6-v2"
   embedding_dimension: 384
   use_contextualized: true
+  normalize: true  # unit-length vectors so cosine == dot product
   batch_size: 32
 
 # Vector store settings
 vector_store:
-  provider: "chromadb"  # chromadb, pinecone, weaviate, qdrant
+  provider: "chromadb"
   collection_name: "documents"
   persist_directory: "data/vectordb"
-  distance_metric: "cosine"  # cosine, l2, ip
+  distance_metric: "cosine"  # applied when the collection is created (re-ingest with --reset after changing)
 
 # Retrieval settings
 retrieval:
-  top_k: 5
-  score_threshold: 0.0  # Minimum similarity score (0.0-1.0)
-  
-  # Hybrid search settings (BM25 + dense)
+  top_k: 5            # chunks handed to the LLM after reranking
+  candidate_k: 20     # chunks pulled from each first-stage retriever before fusion/reranking
+
+  # Hybrid search settings (BM25 + dense, fused with Reciprocal Rank Fusion)
   hybrid:
-    enabled: false
-    alpha: 0.5  # Weight for dense search (1-alpha for BM25)
+    enabled: true
+    rrf_k: 60
     bm25_k1: 1.5
     bm25_b: 0.75
 
 # Reranking settings
 reranking:
-  enabled: false
-  model: "cross-encoder/ms-marco-MiniLM-L-6-v2"  # or "cohere-rerank"
-  top_k: 3  # Number of results after reranking
+  enabled: true
+  model: "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
-# Processing settings
+# Processing settings (ingestion)
 processing:
-  # Parser settings
   do_ocr: false
   do_table_structure: true
   generate_picture_images: true
   images_scale: 2.0
-  
-  # Chunking settings
   merge_peers: true
-  chunk_size: 512
-  chunk_overlap: 50
